@@ -22,3 +22,16 @@ def contents(tabname):
     cdata = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
     return cdata
    
+def policies(tabname):
+    df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
+    df = df[pd.notnull(df[majorkey])]
+    major = {}
+    for polname in df[majorkey]:
+        polline = df[df[majorkey] == polname][location]
+        locname = polline.iloc[0]
+        if locname:
+            major[polname] = str(locname)
+    data = {}
+    data['data'] = major
+    datajson = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
+    return datajson
