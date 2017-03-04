@@ -43,7 +43,7 @@ def policies(tabname):
 
 # Filter on FAIR principles
 def fair(tabname):
-    df = pd.read_excel(path, sheetname=tabname, header = 1)
+    df = pd.read_excel(MATRIX, tabname, header=1, skiprows=0)
     fairfilter = {}
     for column in df.columns:
         if re.search("FINDABLE", column, re.DOTALL): #, re.MULTILINE):
