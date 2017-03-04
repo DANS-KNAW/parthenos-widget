@@ -40,3 +40,18 @@ def policies(tabname):
     data['data'] = major
     datajson = json.dumps(data, ensure_ascii=True, sort_keys=True, indent=4)
     return datajson
+
+# Filter on FAIR principles
+def fair(tabname):
+    df = pd.read_excel(path, sheetname=tabname, header = 1)
+    fairfilter = {}
+    for column in df.columns:
+        if re.search("FINDABLE", column, re.DOTALL): #, re.MULTILINE):
+            fairfilter['FINDABLE'] = column
+        if re.search("ACCESSIBLE", column, re.DOTALL): #, re.MULTILINE):
+            fairfilter['ACCESSIBLE'] = column
+        if re.search("INTEROPERABLE", column, re.DOTALL): #, re.MULTILINE):
+            fairfilter['INTEROPERABLE'] = column
+        if re.search("REUSABLE", column, re.DOTALL): #, re.MULTILINE):
+            fairfilter['REUSABLE'] = column
+    return (df, fairfilter)
