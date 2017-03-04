@@ -24,14 +24,19 @@ def contents(tabname):
    
 def policies(tabname):
     df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
-    df = df[pd.notnull(df[majorkey])]
+    policyfield = majorkey
+    try:
+        df = df[pd.notnull(df[majorkey])]
+    except:
+	df = df[pd.notnull(df[policykey])]
+	policyfield = policykey
     major = {}
-    for polname in df[majorkey]:
-        polline = df[df[majorkey] == polname][location]
+    for polname in df[policyfield]:
+        polline = df[df[policyfield] == polname][location]
         locname = polline.iloc[0]
         if locname:
             major[polname] = str(locname)
     data = {}
     data['data'] = major
-    datajson = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
+    datajson = json.dumps(data, ensure_ascii=True, sort_keys=True, indent=4)
     return datajson
