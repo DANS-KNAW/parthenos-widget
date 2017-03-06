@@ -57,7 +57,7 @@ def fair(tabname):
     return (df, fairfilter)
 
 # Filtering out policies based on FAIR acronyms
-def fairfilter(df, command):
+def fairfilter(df, filters, command):
     fairmatrix = {}
     fairmatrix['f'] = df[filters['FINDABLE']]=='X'
     fairmatrix['a'] = df[filters['ACCESSIBLE']]=='X'
