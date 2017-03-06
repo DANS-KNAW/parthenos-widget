@@ -4,3 +4,9 @@ import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BASE_PATH = os.path.abspath(os.path.join(HERE, os.pardir))
+
+matrixfile = "matrix20170204.xlsx"
+MATRIX = os.path.join(BASE_PATH, '../data', matrixfile)
+majorkey = "POLICY"
+policykey = "FORMAL POLICY"
+location = 'COUNTRY'
