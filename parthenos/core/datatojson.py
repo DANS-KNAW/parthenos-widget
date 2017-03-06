@@ -55,3 +55,20 @@ def fair(tabname):
         if re.search("REUSABLE", column, re.DOTALL): #, re.MULTILINE):
             fairfilter['REUSABLE'] = column
     return (df, fairfilter)
+
+# Filtering out policies based on FAIR acronyms
+def fairfilter(df, command):
+    fairmatrix = {}
+    fairmatrix['f'] = df[filters['FINDABLE']]=='X'
+    fairmatrix['a'] = df[filters['ACCESSIBLE']]=='X'
+    fairmatrix['i'] = df[filters['INTEROPERABLE']]=='X'
+    fairmatrix['r'] = df[filters['REUSABLE']]=='X'
+
+    resultmatrix = pd.DataFrame()
+    for acr in command:
+        if resultmatrix.empty:   
+            resultmatrix = fairmatrix[acr]
+        else:
+            resultmatrix = resultmatrix & fairmatrix[acr]
+            
+    return df[resultmatrix]
