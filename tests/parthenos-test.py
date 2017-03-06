@@ -16,5 +16,7 @@ import json
 
 if __name__ == '__main__':
     print ('%s' % policies(4))
-    (df, fairfilter) = fair(4) 
-    print ('%s' % fairfilter)
+    (df, fairtest) = fair(4) 
+    print ('%s' % fairtest)
+    x = fairfilter(df, fairtest, 'fair')
+    print ('%s' % x.to_html())
