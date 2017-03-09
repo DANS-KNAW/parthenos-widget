@@ -56,6 +56,28 @@ def fair(tabname):
             fairfilter['REUSABLE'] = column
     return (df, fairfilter)
 
+def frametokeys(df):
+    allkeys = {}
+    for item in df.columns:
+        allkeys[item] = ''
+    return allkeys
+
+def frametovalues(df):
+    allvalues = {}
+    skip = 0
+    for thisindex in df.index:
+        line = df.ix[thisindex]
+        for col in line:
+            try:
+                allvalues[str(col)] = ''
+            except:
+                skip = 1
+                
+        finalvalues = []
+        for item in sorted(allvalues):
+            finalvalues.append(item)
+    return finalvalues
+
 # Filtering out policies based on FAIR acronyms
 def fairfilter(df, filters, command):
     fairmatrix = {}
