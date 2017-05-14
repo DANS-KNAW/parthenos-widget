@@ -73,6 +73,10 @@ def webpolicies():
 def webcontents():
     return contents('CONTENTS')
 
+@app.route("/topics")
+def webtopics():
+    return topics('ARCHAEOLOGY')
+
 @app.route("/list")
 def showlist():
     return list()
