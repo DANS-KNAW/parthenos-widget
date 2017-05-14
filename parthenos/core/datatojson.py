@@ -21,6 +21,14 @@ def contents(tabname):
     data['contents'] = content
     cdata = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
     return cdata
+
+def topics(tabname):
+    df = pd.read_excel(MATRIX, sheetname=tabname, skiprows=1)
+    columns = []
+    for colname in df.columns:
+        if colname not in forbidden:
+            columns.append(colname)
+    return columns
    
 def policies(tabname):
     df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
