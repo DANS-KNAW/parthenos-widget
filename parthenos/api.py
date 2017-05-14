@@ -22,7 +22,7 @@ def list():
     return Response(resp.text,  mimetype='application/json')
 
 @app.route('/topics', methods=['GET', 'POST'])
-def topics():
+def apitopics():
     params = request.args
     url = root
     url+= "/topics"
