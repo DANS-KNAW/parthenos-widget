@@ -23,12 +23,14 @@ def contents(tabname):
     return cdata
 
 def topics(tabname):
+    topics = {}
     df = pd.read_excel(MATRIX, sheetname=tabname, skiprows=1)
     columns = []
     for colname in df.columns:
         if colname not in forbidden:
             columns.append(colname)
-    return columns
+    topics['topics'] = columns
+    return topics 
    
 def policies(tabname):
     df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
