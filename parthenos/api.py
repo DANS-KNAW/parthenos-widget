@@ -21,6 +21,15 @@ def list():
     data = json.loads(resp.text)
     return Response(resp.text,  mimetype='application/json')
 
+@app.route('/topics', methods=['GET', 'POST'])
+def topics():
+    params = request.args
+    url = root
+    url+= "/topics"
+    resp = requests.get(url=url, params=params)
+    data = json.loads(resp.text)
+    return Response(resp.text,  mimetype='application/json')
+
 @app.route('/contents', methods=['GET', 'POST'])
 def content():
     params = request.args
