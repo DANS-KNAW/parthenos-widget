@@ -22,10 +22,19 @@ def contents(tabname):
     cdata = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
     return cdata
 
+# "community:RESEARCH COMMUNITY",discipline:SOCIAL SCIENCE","topic:REUSABLE (provenance; usage licence; standards)"
+def filtertodict(params):
+    keys = {}
+    for thisstr in params:
+	info = re.match(r'(\S+)\:(.+)$', thisstr)
+	if info:
+    	    keys[info.group(1)] = info.group(2)
+    return keys
+
 def gettopics(tabname):
     alltopics = {}
     xl = pd.ExcelFile(MATRIX)
-    df = pd.read_excel(MATRIX, sheetname=xl.sheet_names[1], skiprows=1)
+    df = pd.read_excel(MATRIX, sheetname=tabname, skiprows=1)
     columns = []
     for colname in df.columns:
         if colname not in forbidden:
