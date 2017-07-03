@@ -28,8 +28,37 @@ def filtertodict(params):
     for thisstr in params:
 	info = re.match(r'(\S+)\:(.+)$', thisstr)
 	if info:
-    	    keys[info.group(1)] = info.group(2)
+    	    keys[info.group(2)] = info.group(1)
     return keys
+
+def mainfilter(params):
+    alltopics = {}
+    df = ''
+    data = ''
+    discipline = ''
+    for name in params:
+	if params[name] == 'discipline':
+	    discipline = name
+	    df = pd.read_excel(MATRIX, sheetname=discipline, header=1, skiprows=0)
+
+    # Filtering data
+    matrix = []
+    for name in params:
+	if params[name] == 'topic':
+	    matrix.append(df[name]=='X')
+	    #df = pd.read_excel(MATRIX, sheetname=discipline, header=1, skiprows=0)
+	    #df = df.groupby(params[name])
+	    #col = df[df[params[name]].notnull()] 
+	    #print col
+	    #print df.columns
+
+    if matrix:
+        fmatrix = matrix[0]
+        for i in range(1, len(matrix)):
+            fmatrix = (fmatrix) | (matrix[i])
+	data = df[fmatrix]
+
+    return data
 
 def gettopics(tabname):
     alltopics = {}
