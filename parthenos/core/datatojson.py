@@ -61,15 +61,14 @@ def mainfilter(params):
     result = {}
     ymatrix = data[selection]
 
-    for col in params:
+    for col in selected:
         rowarray = []
         for row in ymatrix.index:
             rowsubset = ymatrix.ix[row]
             rowresult = {}
-            for col in selected:
-                if rowsubset[col] == 'X':
-                    d = rowsubset.to_dict() #orient='records')
-                    rowarray.append(d)
+            if rowsubset[col] == 'X':
+                d = rowsubset.to_dict() #orient='records')
+                rowarray.append(d)
         result[col] = rowarray
 
     return result
