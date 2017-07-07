@@ -36,6 +36,7 @@ def mainfilter(params):
     df = ''
     data = ''
     discipline = ''
+    selection = ['POLICY','COUNTRY','POLICY LINK']
     for name in params:
 	if params[name] == 'discipline':
 	    discipline = name
@@ -43,14 +44,12 @@ def mainfilter(params):
 
     # Filtering data
     matrix = []
+    selected = []
     for name in params:
 	if params[name] == 'topic':
 	    matrix.append(df[name]=='X')
-	    #df = pd.read_excel(MATRIX, sheetname=discipline, header=1, skiprows=0)
-	    #df = df.groupby(params[name])
-	    #col = df[df[params[name]].notnull()] 
-	    #print col
-	    #print df.columns
+	    selected.append(name)
+	    selection.append(name)
 
     if matrix:
         fmatrix = matrix[0]
@@ -58,7 +57,22 @@ def mainfilter(params):
             fmatrix = (fmatrix) | (matrix[i])
 	data = df[fmatrix]
 
-    return data
+    # Final result
+    result = {}
+    ymatrix = data[selection]
+
+    for col in params:
+        rowarray = []
+        for row in ymatrix.index:
+            rowsubset = ymatrix.ix[row]
+            rowresult = {}
+            for col in selected:
+                if rowsubset[col] == 'X':
+                    d = rowsubset.to_dict() #orient='records')
+                    rowarray.append(d)
+        result[col] = rowarray
+
+    return result
 
 def gettopics(tabname):
     alltopics = {}
