@@ -1,3 +1,4 @@
+var val = [];
 d3.json(topicsurl, function(cdata) {
     var tophtml = '<br><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     topichtml = '<br><p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
@@ -12,11 +13,21 @@ d3.json(topicsurl, function(cdata) {
     $(tophtml).appendTo('#topics');
 });
 
+function result (cdata) {
+var postdata = {};
+var xcdata = ["community:RESEARCH COMMUNITY", "discipline:SOCIAL SCIENCE", "topic:LEGAL FRAMEWORK", "topic:PRIVACY AND SENSITIVE DATA"];
+for (name in cdata) {
+	postdata[cdata[name]] = 1;	
+};
+apiurl = "http://zandbak11.dans.knaw.nl/widget/test";
+var senddata = JSON.stringify(postdata);
+
 d3.json(apiurl, function(data) {
     console.log(data);
-    var polhtml = '<br><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+    var polhtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     for (k in data) {
         var k_data = data[k];
+	polhtml = polhtml + "<h4>" + k + "</h4>";
         console.log(k_data);
         for (d in k_data) {
                 console.log(d, k_data[d]);
@@ -24,13 +35,23 @@ d3.json(apiurl, function(data) {
                 if (!value) {
                         value = '';
                 }
-                name = "<a href='" + polurl + d + "'>" + d + "</a>";
-                polhtml = polhtml + '<li><b>' + value + '</b>' + name + '</li>';
+		polurl = "#";
+		if (k_data[d]['POLICY LINK'])
+		{
+		   polurl = k_data[d]['POLICY LINK'];
+		}
+                name = "<a href='" + polurl + "'>" + k_data[d]['POLICY']  + "</a>";
+                polhtml = polhtml + '<li>' + k_data[d]['COUNTRY'] + ' ' + name + '</li>';
         };
     };
   polhtml = polhtml + "</ul>";
+  $("#policies").empty();
+  $("#policies").html("<h4><b>Policies that match your selection</b></h4>");
   $(polhtml).appendTo('#policies');
-});
+})
+.header("Content-Type","application/json")
+.send("POST",senddata);
+};
 
 d3.json(contentsurl, function(cdata) {
     var conthtml = '<h4><b>Select your Community</b><div class="tab-pane active" id="godiscipline" style="float:right"><a class="btn btn-primary btnNext">Next</a></div></h4>';
