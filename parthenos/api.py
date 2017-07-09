@@ -40,8 +40,13 @@ def list():
     params = request.args
     url = root
     url+= "/list"
-    resp = requests.get(url=url, params=params)
-    data = json.loads(resp.text)
+    if request.data:
+        qinput = json.loads( request.data )
+        resp = requests.post(url=url, data=request.data)
+	data = json.loads(resp.text)
+    else:
+        resp = requests.get(url=url, params=params)
+        data = json.loads(resp.text)
     return Response(resp.text,  mimetype='application/json')
 
 @app.route('/topics', methods=['GET', 'POST'])
@@ -49,9 +54,16 @@ def apitopics():
     params = request.args
     url = root
     url+= "/topics"
-    resp = requests.get(url=url, params=params)
-    data = json.loads(resp.text)
-    return Response(resp.text,  mimetype='application/json')
+    if request.data:
+        qinput = json.loads( request.data )
+        resp = requests.post(url=url, data=request.data)
+	return str(resp.text)
+        data = json.loads(resp.text)
+	return Response(data,  mimetype='application/json')
+    else:
+        resp = requests.get(url=url, params=params)
+        data = json.loads(resp.text)
+        return Response(resp.text,  mimetype='application/json')
 
 @app.route('/contents', methods=['GET', 'POST'])
 def content():
