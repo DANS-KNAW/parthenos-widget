@@ -18,6 +18,7 @@ def test():
 	qinput = json.loads( request.data )
         resp = requests.post(url=url, data=request.data)
 	return resp.text
+
         data = json.loads(resp.text)
 	return 'test'
         return Response(resp.text,  mimetype='application/json')
