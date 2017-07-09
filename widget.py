@@ -91,10 +91,16 @@ def webpolicies():
 def webcontents():
     return contents('CONTENTS')
 
-@app.route("/topics")
+@app.route("/topics", methods=['GET', 'POST'])
 def webtopics():
-#    return gettopics('ARCHAEOLOGY')
-     return gettopics('SOCIAL SCIENCE')
+    maindiscipline = 'SOCIAL SCIENCE'
+    if request.data:
+        qinput = json.loads( request.data )
+        for name in qinput:
+	    m = re.match(r'discipline\:(.+)$', maindiscipline)
+	    if m:
+	        maindiscipline = m.group(1)
+    return gettopics(maindiscipline)
 
 @app.route("/list")
 def showlist():
