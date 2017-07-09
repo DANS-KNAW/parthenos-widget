@@ -67,6 +67,22 @@ def list():
 def main():
     return processor()
 
+@app.route("/mainfilter", methods=['GET', 'POST'])
+def webfilter():
+    newfilterparams = []
+    if request.data:
+        qinput = json.loads( request.data )
+	for name in qinput:
+	    newfilterparams.append(name)
+    
+    #newfilterparams = ["community:RESEARCH COMMUNITY","discipline:SOCIAL SCIENCE","topic:CITATION GUIDELINES", "topic:PRIVACY AND SENSITIVE DATA"]
+    x = filtertodict(newfilterparams)
+    #data = json.dumps(x, ensure_ascii=False, sort_keys=True, indent=4)
+    #return Response(data,  mimetype='application/json')
+    outmatrix = mainfilter(filtertodict(newfilterparams))
+    data = json.dumps(outmatrix, ensure_ascii=False, sort_keys=True, indent=4)
+    return Response(data,  mimetype='application/json')
+
 @app.route("/policies")
 def webpolicies():
     return policies()
@@ -77,7 +93,8 @@ def webcontents():
 
 @app.route("/topics")
 def webtopics():
-    return gettopics('ARCHAEOLOGY')
+#    return gettopics('ARCHAEOLOGY')
+     return gettopics('SOCIAL SCIENCE')
 
 @app.route("/list")
 def showlist():
