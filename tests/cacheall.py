@@ -2,7 +2,7 @@ from __future__ import print_function, absolute_import
 
 import sys
 import os
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 #from tests.config import MATRIX
 #from parthenos.core.datatojson import *
 import uuid
@@ -12,11 +12,11 @@ import pandas as pd
 import simplejson
 import json
 
-basedir = "%s/%s" % (os.getenv("HOME"), "projects/parthenos-widget")
-datadir = "%s/data" % basedir
-cachedir = "%s/%s" % (basedir, "cache")
+basedir = os.path.dirname(os.path.realpath(__file__))
+datadir = "%s/../data" % basedir
+cachedir = "%s/../%s" % (basedir, "cache")
+
 sys.path.append(basedir)
-#from tests.config import MATRIX
 from parthenos.core.datatojson import *
 from parthenos.settings import *
 import tables
