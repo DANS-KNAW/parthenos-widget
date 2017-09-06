@@ -46,6 +46,28 @@ def contents(tabname):
     cdata = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
     return Response(cdata,  mimetype='application/json')
 
+def list():
+    data = read_contents("CONTENTS")
+    tablist = {}
+    tabs = []
+    for name in data['name']:
+        tabs.append(name)
+    tablist['data'] = tabs
+    data = json.dumps(tablist, ensure_ascii=False, sort_keys=True, indent=4)
+    return Response(data,  mimetype='application/json')
+
+def gettopics(tabname):
+    alltopics = {}
+    topickey = "SOCIAL SCIENCE"
+    df = dataloader(topickey)
+    columns = []
+    for colname in df.columns:
+        if colname not in forbidden:
+            columns.append(colname)
+    alltopics['topics'] = columns
+    cdata = json.dumps(alltopics, ensure_ascii=False, sort_keys=True, indent=4)
+    return cdata
+
 def datacache(cachedir):
     xl = pd.ExcelFile(MATRIX)
     for tabname in xl.sheet_names:
@@ -71,6 +93,14 @@ def main():
 @app.route("/contents")
 def webcontents():
     return contents('CONTENTS')
+
+@app.route("/list")
+def showlist():
+    return list()
+
+@app.route("/topics")
+def webtopics():
+    return gettopics('ARCHAEOLOGY')
 
 if __name__ == '__main__':
     s = datacache(cachedir)
