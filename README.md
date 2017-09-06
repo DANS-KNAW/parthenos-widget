@@ -11,4 +11,8 @@ yum install httpd
 
 # Install python dependencies
 pip install -r requirements.txt
+# Build Docker image
+docker build -t parthenos:latest .
+# Run Docker container
+docker run -p 8081:8081 parthenos
 ```
