@@ -7,6 +7,56 @@ import numpy as np
 import json
 from parthenos.settings import *
 
+def filtertodict(params):
+    keys = {}
+    for thisstr in params:
+        info = re.match(r'(\S+)\:(.+)$', thisstr)
+        if info:
+            keys[info.group(2)] = info.group(1)
+    return keys
+
+def mainfilter(df, params):
+    alltopics = {}
+    data = ''
+    discipline = ''
+    selection = ['POLICY','POLICY LINK']
+
+    # Filtering data
+    matrix = []
+    selected = []
+    skip = 0
+    for name in params:
+        if params[name] == 'topic':
+            try:
+                matrix.append(df[name]=='X')
+                selected.append(name)
+                selection.append(name)
+            except:
+                skip = 1
+
+    if matrix:
+        fmatrix = matrix[0]
+        for i in range(1, len(matrix)):
+            fmatrix = (fmatrix) | (matrix[i])
+        data = df[fmatrix]
+
+    # Final result
+    result = {}
+    data = data.replace(np.nan, '', regex=True)
+    ymatrix = data[selection]
+
+    for col in selected:
+        rowarray = []
+        for row in ymatrix.index:
+            rowsubset = ymatrix.ix[row]
+            rowresult = {}
+            if rowsubset[col] == 'X':
+                d = rowsubset.to_dict() #orient='records')
+                rowarray.append(d)
+        result[col] = rowarray
+
+    return result
+
 def contents(tabname):
     df = pd.read_excel(MATRIX, sheetname=tabname, header=None, skiprows=0)
     data = df #.transpose()
