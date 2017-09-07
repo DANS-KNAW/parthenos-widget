@@ -143,7 +143,7 @@ def webtopics():
             m = re.match(r'community\:(.+)$', name)
             if m:
                 maindiscipline = m.group(1)
-    maindiscipline = 'SOCIAL SCIENCE'
+    maindiscipline = 'ARCHAEOLOGY'
     return gettopics(maindiscipline)
 
 if __name__ == '__main__':
