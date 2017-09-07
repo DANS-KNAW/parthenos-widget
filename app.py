@@ -92,6 +92,24 @@ def read_contents(tabname):
 def main():
     return 'Wizard is running...'
 
+@app.route("/verification")
+def verify():
+    c = read_contents("CONTENTS")
+    topics = []
+    columns = {}
+    for name in c['name']:
+        df = dataloader(name)
+        for c in df.columns:
+            try:
+                columns[c] = columns[c] + 1
+            except:
+                columns[c] = 1
+
+    ver = ''
+    for c in sorted(columns):
+        ver = ver + "%s %s<br />" % (c, columns[c])
+    return str(ver)
+
 @app.route("/webfilter", methods=['GET', 'POST'])
 def webfilter():
     newfilterparams = []
