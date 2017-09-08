@@ -66,7 +66,9 @@ def gettopics(tabname):
     columns = []
     for colname in df.columns:
         if colname not in forbidden:
-            columns.append(colname)
+            check = re.match('Unnamed', colname)
+            if not check:
+                columns.append(colname)
     alltopics['topics'] = columns
     cdata = json.dumps(alltopics, ensure_ascii=False, sort_keys=True, indent=4)
     return cdata
@@ -164,7 +166,6 @@ def webtopics():
             m = re.match(r'community\:(.+)$', name)
             if m:
                 maindiscipline = m.group(1)
-    maindiscipline = 'ARCHAEOLOGY'
     return gettopics(maindiscipline)
 
 if __name__ == '__main__':
