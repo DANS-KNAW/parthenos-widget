@@ -19,7 +19,7 @@ def mainfilter(df, params):
     alltopics = {}
     data = ''
     discipline = ''
-    selection = ['POLICY','POLICY LINK']
+    selection = ['POLICY','POLICY LINK', 'ORGANISATION']
 
     # Filtering data
     matrix = []
