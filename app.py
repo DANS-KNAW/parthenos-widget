@@ -1,6 +1,7 @@
 from __future__ import print_function, absolute_import
 
 import sys
+import re
 import os
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 from flask import Flask, redirect, make_response, Response, render_template, request, send_from_directory
@@ -107,7 +108,9 @@ def verify():
 
     ver = ''
     for c in sorted(columns):
-        ver = ver + "%s %s<br />" % (c, columns[c])
+        check = re.match('Unnamed', c)
+        if not check:
+            ver = ver + "%s %s<br />" % (c, columns[c])
     return str(ver)
 
 @app.route("/webfilter", methods=['GET', 'POST'])
