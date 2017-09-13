@@ -112,7 +112,7 @@ def verify():
     for c in sorted(columns):
         check = re.match('Unnamed', c)
         if not check:
-            ver = ver + "%s| %s<br />" % (c, columns[c])
+            ver = ver + "%s| %s<br />\n" % (c, columns[c])
     return str(ver)
 
 @app.route("/webfilter", methods=['GET', 'POST'])
