@@ -88,7 +88,7 @@ def subtopics(thistabname):
     for name in fields:
         x = df.ix[0] == name
         y = x[x == True]
-        longname = "%s %s" % (phrase, name)
+        longname = "%s %s" % (phrase, name.lower())
         topics[longname] = y.index.tolist()
     alltopics['topics'] = topics
     cdata = json.dumps(alltopics, ensure_ascii=False, sort_keys=True, indent=4)
