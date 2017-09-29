@@ -73,6 +73,27 @@ def gettopics(tabname):
     cdata = json.dumps(alltopics, ensure_ascii=False, sort_keys=True, indent=4)
     return cdata
 
+def subtopics(thistabname):
+    alltopics = {}
+    xl = pd.ExcelFile(MATRIX)
+    df = ''
+    for tabname in xl.sheet_names:
+        #if tabname != 'CONTENTS':
+        if tabname == thistabname:
+            df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
+
+    fields = ['Reusable', 'Findable', 'Interoperable', 'Accessible']
+    phrase = "Guidelines to make your data"
+    topics = {}
+    for name in fields:
+        x = df.ix[0] == name
+        y = x[x == True]
+        longname = "%s %s" % (phrase, name)
+        topics[longname] = y.index.tolist()
+    alltopics['topics'] = topics
+    cdata = json.dumps(alltopics, ensure_ascii=False, sort_keys=True, indent=4)
+    return cdata
+
 def datacache(cachedir):
     xl = pd.ExcelFile(MATRIX)
     for tabname in xl.sheet_names:
@@ -166,7 +187,7 @@ def webtopics():
             m = re.match(r'community\:(.+)$', name)
             if m:
                 maindiscipline = m.group(1)
-    return gettopics(maindiscipline)
+    return subtopics(maindiscipline)
 
 if __name__ == '__main__':
     s = datacache(cachedir)
