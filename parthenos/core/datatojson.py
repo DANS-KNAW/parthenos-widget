@@ -72,10 +72,61 @@ def contents(tabname):
     cdata = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
     return cdata
 
+# "community:RESEARCH COMMUNITY",discipline:SOCIAL SCIENCE","topic:REUSABLE (provenance; usage licence; standards)"
+def filtertodict(params):
+    keys = {}
+    for thisstr in params:
+	info = re.match(r'(\S+)\:(.+)$', thisstr)
+	if info:
+    	    keys[info.group(2)] = info.group(1)
+    return keys
+
+def mainfilter(params):
+    alltopics = {}
+    df = ''
+    data = ''
+    discipline = ''
+    selection = ['POLICY','COUNTRY','POLICY LINK']
+    for name in params:
+	if params[name] == 'discipline':
+	    discipline = name
+	    df = pd.read_excel(MATRIX, sheetname=discipline, header=1, skiprows=0)
+
+    # Filtering data
+    matrix = []
+    selected = []
+    for name in params:
+	if params[name] == 'topic':
+	    matrix.append(df[name]=='X')
+	    selected.append(name)
+	    selection.append(name)
+
+    if matrix:
+        fmatrix = matrix[0]
+        for i in range(1, len(matrix)):
+            fmatrix = (fmatrix) | (matrix[i])
+	data = df[fmatrix]
+
+    # Final result
+    result = {}
+    ymatrix = data[selection]
+
+    for col in selected:
+        rowarray = []
+        for row in ymatrix.index:
+            rowsubset = ymatrix.ix[row]
+            rowresult = {}
+            if rowsubset[col] == 'X':
+                d = rowsubset.to_dict() #orient='records')
+                rowarray.append(d)
+        result[col] = rowarray
+
+    return result
+
 def gettopics(tabname):
     alltopics = {}
     xl = pd.ExcelFile(MATRIX)
-    df = pd.read_excel(MATRIX, sheetname=xl.sheet_names[1], skiprows=1)
+    df = pd.read_excel(MATRIX, sheetname=tabname, skiprows=1)
     columns = []
     for colname in df.columns:
         if colname not in forbidden:
