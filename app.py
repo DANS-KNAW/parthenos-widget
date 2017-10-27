@@ -33,6 +33,25 @@ def dataloader(topickey):
     df = pd.read_hdf("%s/%s.h5" % (cachedir, topickey), 'key')
     return df
 
+def getbestpractice(thistabname):
+    xl = pd.ExcelFile(MATRIX)
+    df = ''
+    for tabname in xl.sheet_names:
+        #if tabname != 'CONTENTS':
+        if tabname == thistabname:
+            df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
+
+    bestpr = []
+    fields = ['BEST PRACTICE']
+    for x in df[fields].index:
+        thisvalue = str(df[fields].ix[x][0])
+        if thisvalue != 'nan':
+            bestpr.append(thisvalue)
+    data = {}
+    data['bestpractice'] = bestpr
+    cdata = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
+    return Response(cdata,  mimetype='application/json')
+
 def contents(tabname):
     data = read_contents("CONTENTS")
     content = {}
@@ -115,6 +134,25 @@ def read_contents(tabname):
 @app.route("/")
 def main():
     return 'Wizard is running...'
+
+@app.route("/bestpractice", methods=['GET', 'POST'])
+def bestpractice():
+    newfilterparams = []
+    discipline = ''
+    try:
+         qinput = json.loads( request.data )
+         for name in qinput.keys():
+             newfilterparams.append(str(name))
+    except:
+	discipline = request.args.get('discipline')
+	if not discipline:
+            return 'no data'
+
+    params = filtertodict(newfilterparams)
+    for name in params:
+        if params[name] == 'discipline':
+            discipline = name
+    return getbestpractice(discipline)
 
 @app.route("/verification")
 def verify():
