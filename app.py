@@ -33,6 +33,25 @@ def dataloader(topickey):
     df = pd.read_hdf("%s/%s.h5" % (cachedir, topickey), 'key')
     return df
 
+def getprinciples(tabname):
+    xl = pd.ExcelFile(MATRIX)
+    df = pd.read_excel(MATRIX, sheetname=tabname, header=0, skiprows=0)
+    
+    principles = []
+    for i in df.index:
+        data = []
+        for c in df.columns:
+            item = df.ix[i][c]
+            if item != np.nan:
+                data.append(item)
+            else:
+                data.append('')
+        principles.append(data)
+    data = {}
+    data['principles'] = principles
+    cdata = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
+    return Response(cdata,  mimetype='application/json')
+
 def getbestpractice(thistabname):
     xl = pd.ExcelFile(MATRIX)
     df = ''
@@ -153,6 +172,10 @@ def bestpractice():
         if params[name] == 'discipline':
             discipline = name
     return getbestpractice(discipline)
+
+@app.route("/principles")
+def principles():
+    return getprinciples("HIGH-LEVEL PRINCIPLES")
 
 @app.route("/verification")
 def verify():
