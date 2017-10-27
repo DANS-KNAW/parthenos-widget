@@ -24,6 +24,22 @@ d3.json(topicsurl, function(cdata) {
 .header("Content-Type","application/json")
 .send("POST",senddata);
 
+d3.json(principlesurl, function(pdata) {
+    console.log(pdata['principles']);
+  var polhtml = "<table>";
+  for (k in pdata['principles']) {
+	stringhtml = '<tr valign=top>';
+	for (item in pdata['principles'][k]) {
+	   stringhtml = stringhtml + '<td>' + pdata['principles'][k][item] + "</td><td width=5></td>\n"; 
+	}
+	polhtml = polhtml + stringhtml + "</tr>\n";
+  }
+  polhtml = polhtml + "</table>";
+  $("#principles").empty();
+  $("#principles").html("<h4><b>All Parthenos High-Level Principles</b></h4>");
+  $(polhtml).appendTo('#principles');
+})
+
 function result (cdata, flag) {
 var postdata = {};
 var xcdata = ["community:RESEARCH COMMUNITY", "discipline:SOCIAL SCIENCE", "topic:LEGAL FRAMEWORK", "topic:PRIVACY AND SENSITIVE DATA"];
@@ -33,6 +49,23 @@ for (name in cdata) {
 apiurl = "http://zandbak11.dans.knaw.nl/widget/test";
 apiurl = "http://zandbak11.dans.knaw.nl/pw/webfilter";
 var senddata = JSON.stringify(postdata);
+
+d3.json(bestpracticesurl, function(bdata) {
+    console.log(bdata['bestpractice']);
+  var polhtml = "<table>";
+  for (k in bdata['bestpractice']) {
+        stringhtml = '<tr valign=top><td width=10></td>';
+        stringhtml = stringhtml + '<td><li>' + bdata['bestpractice'][k] + "</td><td width=5></td>\n";
+        polhtml = polhtml + stringhtml + "</tr>\n";
+  }
+  polhtml = polhtml + "</table>";
+  console.log(polhtml);
+  $("#bestpractice").empty();
+  $("#bestpractice").html("<h4><b>Best Practices</b></h4>");
+  $(polhtml).appendTo('#bestpractice');
+})
+.header("Content-Type","application/json")
+.send("POST",senddata);
 
 if (flag == 1) {
 	d3.json(topicsurl, function(cdata) {
