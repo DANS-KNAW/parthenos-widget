@@ -130,7 +130,10 @@ def subtopics(thistabname):
         longname = "%s %s" % (phrase, name.lower())
         topics[longname] = y.index.tolist()
     alltopics['topics'] = topics
-    alltopics['order'] = fields
+    fullfields = []
+    for name in fields:
+	fullfields.append("%s %s" % (phrase, name.lower()))
+    alltopics['order'] = fullfields
     cdata = json.dumps(alltopics, ensure_ascii=False, sort_keys=True, indent=4)
     return cdata
 
