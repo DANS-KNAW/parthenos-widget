@@ -120,7 +120,8 @@ def subtopics(thistabname):
         if tabname == thistabname:
             df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
 
-    fields = ['Reusable', 'Findable', 'Interoperable', 'Accessible']
+    # Make order FAIR
+    fields = ['Findable', 'Accessible', 'Interoperable', 'Reusable']
     phrase = "Guidelines to make your data"
     topics = {}
     for name in fields:
