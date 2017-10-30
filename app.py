@@ -42,7 +42,7 @@ def getprinciples(tabname):
         data = []
         for c in df.columns:
             item = df.ix[i][c]
-            if item != np.nan:
+            if c != 'Principle link':
                 data.append(item)
             else:
                 data.append('')
