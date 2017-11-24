@@ -1,6 +1,8 @@
 from __future__ import print_function, absolute_import
 
 import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 import re
 import os
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
@@ -29,9 +31,101 @@ try:
 except:
     os.mkdir(cachedir)
 
+def frametoxml(df):
+    allvalues = {}
+    skip = 0
+    tmpxml = ""
+    for thisindex in df.index:
+        line = df.ix[thisindex]
+        #print str(line)
+        tmpxml = tmpxml + "\n\t<item id=\"%s\">" % str(thisindex)
+        for col in df.columns:
+            #print "\t%s %s" % (col, str(thisindex))
+            colname = col
+            colname = colname.replace("\n", '_', 10)
+            colname = colname.replace('&', '&amp;', 30)
+            value = str(df.ix[thisindex][col])
+            value = value.replace('&','&amp;').decode('utf-8')
+            if value == 'nan':
+                value = ''
+            else:
+                tmpxml = tmpxml + "\n\t\t<column name=\"%s\">%s</column>" % (colname, value)
+            #print col
+            try:
+                allvalues[str(col)] = ''
+            except:
+                skip = 1
+        tmpxml = tmpxml + "\n</item>"
+                
+        finalvalues = []
+        for item in sorted(allvalues):
+            finalvalues.append(item)
+    return tmpxml
+
+def matrix2xml():
+    sheetid = 0
+    xmlcontent = "<?xml version=\"1.0\"?>"
+    xmlcontent = xmlcontent + "\n<data>"
+    data = read_contents("CONTENTS")
+    content = {}
+    for index in data.index:
+        row = data.ix[index]
+        if str(row[1]) != 'nan':
+            content[row[0]] = row[1]
+        else:
+            content[row[0]] = ''
+
+    for dname in content:
+	df = dataloader(dname)
+        if sheetid:
+            xmlcontent = xmlcontent + "\n\t<discipline name=\"%s\" >" % dname
+            tmpxml = frametoxml(df)
+            xmlcontent =  xmlcontent + tmpxml + "\n</discipline>"
+        sheetid = sheetid + 1
+    xmlcontent = xmlcontent + "\n</data>"
+    return xmlcontent
+
 def dataloader(topickey):
     df = pd.read_hdf("%s/%s.h5" % (cachedir, topickey), 'key')
     return df
+
+def getprinciples(tabname):
+    xl = pd.ExcelFile(MATRIX)
+    df = pd.read_excel(MATRIX, sheetname=tabname, header=0, skiprows=0)
+    
+    principles = []
+    for i in df.index:
+        data = []
+        for c in df.columns:
+            item = df.ix[i][c]
+            if c != 'Principle link':
+                data.append(item)
+            else:
+                data.append('')
+        principles.append(data)
+    data = {}
+    data['principles'] = principles
+    cdata = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
+    return Response(cdata,  mimetype='application/json')
+
+def getbestpractice(thistabname):
+    xl = pd.ExcelFile(MATRIX)
+    df = ''
+    for tabname in xl.sheet_names:
+        #if tabname != 'CONTENTS':
+        if tabname == thistabname:
+            df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
+
+    bestpr = []
+    fields = ['BEST PRACTICE']
+    for x in df[fields].index:
+        thisvalue = str(df[fields].ix[x][0])
+        if thisvalue != 'nan':
+            bestpr.append(thisvalue)
+    data = {}
+    data['bestpractice'] = bestpr
+    cdata = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
+    return Response(cdata,  mimetype='application/json')
 
 def contents(tabname):
     data = read_contents("CONTENTS")
@@ -82,7 +176,8 @@ def subtopics(thistabname):
         if tabname == thistabname:
             df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
 
-    fields = ['Reusable', 'Findable', 'Interoperable', 'Accessible']
+    # Make order FAIR
+    fields = ['Findable', 'Accessible', 'Interoperable', 'Reusable']
     phrase = "Guidelines to make your data"
     topics = {}
     for name in fields:
@@ -91,6 +186,10 @@ def subtopics(thistabname):
         longname = "%s %s" % (phrase, name.lower())
         topics[longname] = y.index.tolist()
     alltopics['topics'] = topics
+    fullfields = []
+    for name in fields:
+	fullfields.append("%s %s" % (phrase, name.lower()))
+    alltopics['order'] = fullfields
     cdata = json.dumps(alltopics, ensure_ascii=False, sort_keys=True, indent=4)
     return cdata
 
@@ -115,6 +214,33 @@ def read_contents(tabname):
 @app.route("/")
 def main():
     return 'Wizard is running...'
+
+@app.route("/bestpractice", methods=['GET', 'POST'])
+def bestpractice():
+    newfilterparams = []
+    discipline = ''
+    try:
+         qinput = json.loads( request.data )
+         for name in qinput.keys():
+             newfilterparams.append(str(name))
+    except:
+	discipline = request.args.get('discipline')
+	if not discipline:
+            return 'no data'
+
+    params = filtertodict(newfilterparams)
+    for name in params:
+        if params[name] == 'discipline':
+            discipline = name
+    return getbestpractice(discipline)
+
+@app.route("/principles")
+def principles():
+    return getprinciples("HIGH-LEVEL PRINCIPLES")
+
+@app.route("/xmlmatrix")
+def export2xml():
+    return Response(matrix2xml(), mimetype='text/xml')
 
 @app.route("/verification")
 def verify():
@@ -159,6 +285,7 @@ def webfilter():
                 discipline = name
 		df = dataloader(discipline)
 
+    # MOD
     outmatrix = mainfilter(df, filtertodict(newfilterparams))
     data = json.dumps(outmatrix, ensure_ascii=False, sort_keys=True, indent=4)
     return Response(data,  mimetype='application/json')
