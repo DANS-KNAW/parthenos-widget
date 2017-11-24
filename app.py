@@ -3,6 +3,7 @@ from __future__ import print_function, absolute_import
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
+import collections
 import re
 import os
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
@@ -272,32 +273,58 @@ def webfilter():
     except:
 	return 'no data'
 
+    cache = {}
     #newfilterparams = ["community:RESEARCH COMMUNITY","discipline:SOCIAL SCIENCE","topic:CITATION GUIDELINES", "topic:PRIVACY AND SENSITIVE DATA"]
     params = filtertodict(newfilterparams)
     discipline = ''
+    searchfilter = {}
     for name in params:
         if params[name] == 'discipline':
             discipline = name
 	    df = dataloader(discipline)
+	else:
+	    if params[name] == 'topic':
+	        searchfilter[name] = params[name]
+
     if discipline == '':
         for name in params: 
             if params[name] == 'community':
                 discipline = name
 		df = dataloader(discipline)
+		cache[discipline] = df
 
     # MOD
-    try:
-        outmatrix = mainfilter(df, filtertodict(newfilterparams))
-        data = json.dumps(outmatrix, ensure_ascii=False, sort_keys=True, indent=4)
-        return Response(data,  mimetype='application/json')
-    except:
-	c = read_contents("CONTENTS")
-	disc = {}
-	for name in c['name']:
-	    if name != discipline:
-		thiskey = "discipline:%s" % name
-	        disc[thiskey] = 1
-        return str(disc)
+    native = {}
+    common = {}
+    result = {}
+    for topic in searchfilter:
+	thisfilter = {}
+	thisfilter[topic] = searchfilter[topic]
+        try:
+            outmatrix = mainfilter(df, thisfilter) #filtertodict(newfilterparams))
+	    native[topic] = outmatrix
+	    result[discipline] = native
+        except:
+	    c = read_contents("CONTENTS")
+	    disc = {}
+	    common = collections.OrderedDict()
+	    for name in c['name']:
+	        if name != discipline:
+		    if name not in cache:
+		        cache[name] = dataloader(name)
+		    try:
+		        outmatrix = mainfilter(cache[name], thisfilter)
+		        common[name] = outmatrix
+		    except:
+		        skip = 1
+		
+    other = {}
+    if result:
+        other['result'] = result
+    if common:
+        other['other'] = common
+    data = json.dumps(other, ensure_ascii=False, sort_keys=True, indent=4)
+    return Response(data,  mimetype='application/json')
 
 @app.route("/contents")
 def webcontents():
