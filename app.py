@@ -238,13 +238,10 @@ def bestpractice():
 def principles():
     return getprinciples("HIGH-LEVEL PRINCIPLES")
 
-<<<<<<< HEAD
 @app.route("/xmlmatrix")
 def export2xml():
     return Response(matrix2xml(), mimetype='text/xml')
 
-=======
->>>>>>> development
 @app.route("/verification")
 def verify():
     c = read_contents("CONTENTS")
