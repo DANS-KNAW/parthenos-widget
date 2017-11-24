@@ -286,9 +286,18 @@ def webfilter():
 		df = dataloader(discipline)
 
     # MOD
-    outmatrix = mainfilter(df, filtertodict(newfilterparams))
-    data = json.dumps(outmatrix, ensure_ascii=False, sort_keys=True, indent=4)
-    return Response(data,  mimetype='application/json')
+    try:
+        outmatrix = mainfilter(df, filtertodict(newfilterparams))
+        data = json.dumps(outmatrix, ensure_ascii=False, sort_keys=True, indent=4)
+        return Response(data,  mimetype='application/json')
+    except:
+	c = read_contents("CONTENTS")
+	disc = {}
+	for name in c['name']:
+	    if name != discipline:
+		thiskey = "discipline:%s" % name
+	        disc[thiskey] = 1
+        return str(disc)
 
 @app.route("/contents")
 def webcontents():
