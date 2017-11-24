@@ -294,17 +294,17 @@ def webfilter():
 		cache[discipline] = df
 
     # MOD
-    native = {}
     common = {}
     result = {}
+    noresult = "No results for this topic. Here you can find suggestions from other disciplines"
     for topic in searchfilter:
 	thisfilter = {}
 	thisfilter[topic] = searchfilter[topic]
         try:
             outmatrix = mainfilter(df, thisfilter) #filtertodict(newfilterparams))
-	    native[topic] = outmatrix
-	    result[discipline] = native
+	    result[topic] = outmatrix
         except:
+	    result[topic] = noresult
 	    c = read_contents("CONTENTS")
 	    disc = {}
 	    common = collections.OrderedDict()
@@ -314,7 +314,9 @@ def webfilter():
 		        cache[name] = dataloader(name)
 		    try:
 		        outmatrix = mainfilter(cache[name], thisfilter)
-		        common[name] = outmatrix
+			dmatrix = {}
+			dmatrix[discipline] = outmatrix
+		        common[topic] = dmatrix
 		    except:
 		        skip = 1
 		
