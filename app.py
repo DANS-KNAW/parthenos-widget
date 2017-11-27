@@ -1,6 +1,9 @@
 from __future__ import print_function, absolute_import
 
 import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+import collections
 import re
 import os
 #sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
@@ -28,6 +31,60 @@ try:
     os.stat(cachedir)
 except:
     os.mkdir(cachedir)
+
+def frametoxml(df):
+    allvalues = {}
+    skip = 0
+    tmpxml = ""
+    for thisindex in df.index:
+        line = df.ix[thisindex]
+        #print str(line)
+        tmpxml = tmpxml + "\n\t<item id=\"%s\">" % str(thisindex)
+        for col in df.columns:
+            #print "\t%s %s" % (col, str(thisindex))
+            colname = col
+            colname = colname.replace("\n", '_', 10)
+            colname = colname.replace('&', '&amp;', 30)
+            value = str(df.ix[thisindex][col])
+            value = value.replace('&','&amp;').decode('utf-8')
+            if value == 'nan':
+                value = ''
+            else:
+                tmpxml = tmpxml + "\n\t\t<column name=\"%s\">%s</column>" % (colname, value)
+            #print col
+            try:
+                allvalues[str(col)] = ''
+            except:
+                skip = 1
+        tmpxml = tmpxml + "\n</item>"
+                
+        finalvalues = []
+        for item in sorted(allvalues):
+            finalvalues.append(item)
+    return tmpxml
+
+def matrix2xml():
+    sheetid = 0
+    xmlcontent = "<?xml version=\"1.0\"?>"
+    xmlcontent = xmlcontent + "\n<data>"
+    data = read_contents("CONTENTS")
+    content = {}
+    for index in data.index:
+        row = data.ix[index]
+        if str(row[1]) != 'nan':
+            content[row[0]] = row[1]
+        else:
+            content[row[0]] = ''
+
+    for dname in content:
+	df = dataloader(dname)
+        if sheetid:
+            xmlcontent = xmlcontent + "\n\t<discipline name=\"%s\" >" % dname
+            tmpxml = frametoxml(df)
+            xmlcontent =  xmlcontent + tmpxml + "\n</discipline>"
+        sheetid = sheetid + 1
+    xmlcontent = xmlcontent + "\n</data>"
+    return xmlcontent
 
 def dataloader(topickey):
     df = pd.read_hdf("%s/%s.h5" % (cachedir, topickey), 'key')
@@ -182,6 +239,10 @@ def bestpractice():
 def principles():
     return getprinciples("HIGH-LEVEL PRINCIPLES")
 
+@app.route("/xmlmatrix")
+def export2xml():
+    return Response(matrix2xml(), mimetype='text/xml')
+
 @app.route("/verification")
 def verify():
     c = read_contents("CONTENTS")
@@ -212,21 +273,59 @@ def webfilter():
     except:
 	return 'no data'
 
+    cache = {}
     #newfilterparams = ["community:RESEARCH COMMUNITY","discipline:SOCIAL SCIENCE","topic:CITATION GUIDELINES", "topic:PRIVACY AND SENSITIVE DATA"]
     params = filtertodict(newfilterparams)
     discipline = ''
+    searchfilter = {}
     for name in params:
         if params[name] == 'discipline':
             discipline = name
 	    df = dataloader(discipline)
+	else:
+	    if params[name] == 'topic':
+	        searchfilter[name] = params[name]
+
     if discipline == '':
         for name in params: 
             if params[name] == 'community':
                 discipline = name
 		df = dataloader(discipline)
+		cache[discipline] = df
 
-    outmatrix = mainfilter(df, filtertodict(newfilterparams))
-    data = json.dumps(outmatrix, ensure_ascii=False, sort_keys=True, indent=4)
+    # MOD
+    common = {}
+    result = {}
+    noresult = "No results for this topic. Here you can find suggestions from other disciplines"
+    for topic in searchfilter:
+	thisfilter = {}
+	thisfilter[topic] = searchfilter[topic]
+        try:
+            outmatrix = mainfilter(df, thisfilter) #filtertodict(newfilterparams))
+	    result[topic] = outmatrix
+        except:
+	    result[topic] = noresult
+	    c = read_contents("CONTENTS")
+	    disc = {}
+	    common = collections.OrderedDict()
+	    for name in c['name']:
+	        if name != discipline:
+		    if name not in cache:
+		        cache[name] = dataloader(name)
+		    try:
+		        outmatrix = mainfilter(cache[name], thisfilter)
+			dmatrix = {}
+			dmatrix[discipline] = outmatrix
+		        common[topic] = dmatrix
+		    except:
+		        skip = 1
+		
+    other = {}
+    if result:
+        other['result'] = result
+    if common:
+        other['other'] = common
+    data = json.dumps(other, ensure_ascii=False, sort_keys=True, indent=4)
     return Response(data,  mimetype='application/json')
 
 @app.route("/contents")

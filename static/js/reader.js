@@ -10,7 +10,7 @@ d3.json(topicsurl, function(cdata) {
     var tophtml = '<br><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     topichtml = '<br><p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     var tabnum = 0;
-    for (k in cdata['topics']) {
+    for (k in cdata['order']) {
 	tophtml + '<p><input type="checkbox" value="topic:' + k_data + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p>';
 	for (x in cdata['topics'][k]) {
             tabnum = tabnum + 1;
@@ -72,12 +72,21 @@ if (flag == 1) {
     	var tophtml = '<br><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     	topichtml = '<br><p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     	var tabnum = 0;
-    	for (k in cdata['topics']) {
-		tophtml = tophtml + '<p><b><font color=#3077e8>' + k + '</font></b></p>';
-		for (x in cdata['topics'][k])
+	var topics= {};
+	var topicid = 0;
+	for (showtopic in cdata['topics'])
+	{
+	   topics[showtopic] = topicid;
+	   topicid = topicid + 1;
+	}
+    	for (k in cdata['order']) {
+		showtopic = cdata['order'][k];
+		tophtml = tophtml + '<p><b><font color=#3077e8>' + showtopic + '</font></b></p>';
+		topicid = topics[showtopic];
+		for (x in cdata['topics'][showtopic])
 		{
         	tabnum = tabnum + 1;
-        	var k_data = cdata['topics'][k][x];
+        	var k_data = cdata['topics'][showtopic][x];
         	tophtml = tophtml + '<p><input type="checkbox" value="topic:' + k_data + '" id="input-10a" data-toggle="checkbox-x"> ' + k_data + '</p>';
 		}
         }

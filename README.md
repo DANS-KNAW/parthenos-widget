@@ -8,6 +8,7 @@ yum install gcc
 yum install python-devel
 yum install openssl-devel
 yum install httpd
+```
 
 # Install python dependencies
 pip install -r requirements.txt
@@ -15,4 +16,7 @@ pip install -r requirements.txt
 docker build -t parthenos:latest .
 # Run Docker container
 docker run -p 8081:8081 parthenos
-```
+# Run curl to get contents
+curl http://localhost:8081/contents
+# Run curl to get topics list
+curl http://localhost:8081/topics

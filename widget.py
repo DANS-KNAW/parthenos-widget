@@ -15,8 +15,7 @@ majorkey = "POLICY"
 location = 'COUNTRY'
 
 def contents(tabname):
-    path = "/var/www/parthenos/matrixc.xlsx"
-    df = pd.read_excel(path, sheetname=tabname, header=None, skiprows=0)
+    df = pd.read_excel(MATRIX, sheetname=tabname, header=None, skiprows=0)
     data = df #.transpose()
     content = {}
     for index in data.index:
@@ -31,18 +30,17 @@ def contents(tabname):
     return Response(cdata,  mimetype='application/json')
 
 def processor():
-    path = "/var/www/parthenos/matrix.xlsx"
     policy = "ADS - Archaeology Data Service"
     if request.args.get('policy'):
 	policy = request.args.get('policy')
-    df = pd.read_excel(path, header = 1)
+    df = pd.read_excel(MATRIX, header = 1)
     d = df[df['POLICY'] == policy]
     dataset = d.transpose()
     data = json.dumps(dataset.to_json(), ensure_ascii=False, sort_keys=True, indent=4)
     return Response(data,  mimetype='application/json')
 
 def policies():
-    df = pd.read_excel(path, header = 1)
+    df = pd.read_excel(MATRIX, header = 1)
     df = df[pd.notnull(df[majorkey])]
     major = {}
     for polname in df[majorkey]:
@@ -67,6 +65,22 @@ def list():
 def main():
     return processor()
 
+@app.route("/mainfilter", methods=['GET', 'POST'])
+def webfilter():
+    newfilterparams = []
+    if request.data:
+        qinput = json.loads( request.data )
+	for name in qinput:
+	    newfilterparams.append(name)
+    
+    #newfilterparams = ["community:RESEARCH COMMUNITY","discipline:SOCIAL SCIENCE","topic:CITATION GUIDELINES", "topic:PRIVACY AND SENSITIVE DATA"]
+    x = filtertodict(newfilterparams)
+    #data = json.dumps(x, ensure_ascii=False, sort_keys=True, indent=4)
+    #return Response(data,  mimetype='application/json')
+    outmatrix = mainfilter(filtertodict(newfilterparams))
+    data = json.dumps(outmatrix, ensure_ascii=False, sort_keys=True, indent=4)
+    return Response(data,  mimetype='application/json')
+
 @app.route("/policies")
 def webpolicies():
     return policies()
@@ -75,9 +89,23 @@ def webpolicies():
 def webcontents():
     return contents('CONTENTS')
 
-@app.route("/topics")
+@app.route("/topics", methods=['GET', 'POST'])
 def webtopics():
-    return gettopics('ARCHAEOLOGY')
+    maindiscipline = 'SOCIAL SCIENCE'
+    if request.data:
+        qinput = json.loads( request.data )
+	thistopic = ''
+        for name in qinput:
+	    m = re.match(r'discipline\:(.+)$', name)
+	    if m:
+	        thistopic = m.group(1)
+	if thistopic:
+	    maindiscipline = thistopic
+	else:
+	    m = re.match(r'community\:(.+)$', name)
+	    if m:
+		maindiscipline = m.group(1)
+    return gettopics(maindiscipline)
 
 @app.route("/list")
 def showlist():
