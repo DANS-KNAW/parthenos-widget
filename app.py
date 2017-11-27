@@ -315,7 +315,7 @@ def webfilter():
 		    try:
 		        outmatrix = mainfilter(cache[name], thisfilter)
 			dmatrix = {}
-			dmatrix[discipline] = outmatrix[topic]
+			dmatrix[name] = outmatrix[topic]
 		        common[topic] = dmatrix
 		    except:
 		        skip = 1
