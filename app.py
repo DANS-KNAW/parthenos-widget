@@ -214,7 +214,7 @@ def read_contents(tabname):
 
 @app.route("/")
 def main():
-    return 'Wizard is running...'
+    return render_template('widget.html')
 
 @app.route("/bestpractice", methods=['GET', 'POST'])
 def bestpractice():
