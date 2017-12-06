@@ -36,27 +36,36 @@ def frametoxml(df):
     allvalues = {}
     skip = 0
     tmpxml = ""
+
     for thisindex in df.index:
         line = df.ix[thisindex]
-        #print str(line)
-        tmpxml = tmpxml + "\n\t<item id=\"%s\">" % str(thisindex)
+        cellxml = ''
         for col in df.columns:
             #print "\t%s %s" % (col, str(thisindex))
             colname = col
             colname = colname.replace("\n", '_', 10)
             colname = colname.replace('&', '&amp;', 30)
+	    colname = colname.replace(',', '', 30)
+	    colname = colname.replace(' ', '_', 30)
+            if re.search(r"^(\d)", colname):
+                colname = "_" + colname
+
             value = str(df.ix[thisindex][col])
             value = value.replace('&','&amp;').decode('utf-8')
             if value == 'nan':
                 value = ''
             else:
-                tmpxml = tmpxml + "\n\t\t<column name=\"%s\">%s</column>" % (colname, value)
+                #tmpxml = tmpxml + "\n\t\t<column name=\"%s\">%s</column>" % (colname, value)
+                if not re.search('Unnamed', colname):
+                    cellxml = cellxml + "\n\t\t<%s>%s</%s>" % (colname, value, colname)
             #print col
             try:
                 allvalues[str(col)] = ''
             except:
                 skip = 1
-        tmpxml = tmpxml + "\n</item>"
+
+        if cellxml:
+            tmpxml = tmpxml + "\t<item>%s\n\t</item>\n" % cellxml
                 
         finalvalues = []
         for item in sorted(allvalues):
@@ -66,7 +75,7 @@ def frametoxml(df):
 def matrix2xml():
     sheetid = 0
     xmlcontent = "<?xml version=\"1.0\"?>"
-    xmlcontent = xmlcontent + "\n<data>"
+    xmlcontent = xmlcontent + "\n<Disciplines>"
     data = read_contents("CONTENTS")
     content = {}
     for index in data.index:
@@ -77,13 +86,16 @@ def matrix2xml():
             content[row[0]] = ''
 
     for dname in content:
+	showname = dname
+	showname = showname.replace(' ', '_', 30)
+
 	df = dataloader(dname)
         if sheetid:
-            xmlcontent = xmlcontent + "\n\t<discipline name=\"%s\" >" % dname
+            xmlcontent = xmlcontent + "\n\t<%s>\n" % showname
             tmpxml = frametoxml(df)
-            xmlcontent =  xmlcontent + tmpxml + "\n</discipline>"
+            xmlcontent =  xmlcontent + tmpxml + "\t</%s>" % showname
         sheetid = sheetid + 1
-    xmlcontent = xmlcontent + "\n</data>"
+    xmlcontent = xmlcontent + "\n</Disciplines>"
     return xmlcontent
 
 def dataloader(topickey):
