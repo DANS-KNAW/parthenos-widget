@@ -103,17 +103,19 @@ d3.json(apiurl, function(data) {
     console.log(data);
     var polhtml = '';
     var firstvalue = '';
-    var found = 0;
-    for (k in data['result']) {
-        var k_data = data['result'][k];
-	var firstvalue = k_data[0];
-	if (firstvalue) {
-	polhtml = polhtml + '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
-	polhtml = polhtml + "<h4><font color=#3077e8>" + k + "</font></h4>";
-        console.log(k_data);
+    for (thistopic in data['result']) {
+	var found = 0;
+        var topicdata = data['result'][thistopic];
+	var firstvalue = 1;
+	if (topicdata['status'] == 'ok') 
+	{
+	    polhtml = polhtml + '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+	    polhtml = polhtml + "<h4><font color=#3077e8>" + thistopic + "</font></h4>";
+            console.log('Data:');
+	    console.log(topicdata);
 
-        for (d in k_data) {
-                console.log(d, k_data[d]);
+	    k_data = topicdata[thistopic];
+            for (d in k_data) {
                 var value = k_data[d];
                 if (!value) {
                         value = '';
@@ -130,32 +132,38 @@ d3.json(apiurl, function(data) {
                     name = "<a href='" + polurl + "' target=_blank>" + k_data[d]['POLICY']  + "</a>";
                     polhtml = polhtml + '<li>' + k_data[d]['ORGANISATION'] + ' ' + name + '</li>';
 		}
-        };
+        	};
  	     polhtml = polhtml + "</ul>";
 	}
-    }
 
-    if (polhtml) {
-	for (thistopic in data['other']) 
+	if (!found)
 	{
-	    polhtml = polhtml + "<p>No results for this topic. Here you can find some suggestions from other disciplines:</p>";
-	    for (thisdisc in data['other'][thistopic]) {
-		polhtml = polhtml + "<h5>" + thisdisc + "</h5>";
-	 	var polvalue = data['other'][thistopic][thisdisc];
-	        for (d in polvalue)
+            polhtml = polhtml + '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+            polhtml = polhtml + "<h4><font color=#3077e8>" + thistopic + "</font></h4>";
+
+	    for (thistopic in data['other']) 
+	    {
+	        polhtml = polhtml + "<p>No results for this topic. Here you can find some suggestions from other disciplines:</p>";
+	        for (thisdisc in data['other'][thistopic]) 
 		{
-		k_data = data['other'][thistopic][thisdisc];
-                polurl = "#";
-                found = 1;
-                if (k_data[d]['POLICY LINK'])
-                {  
-                   polurl = k_data[d]['POLICY LINK'];
-                }
-	        name = "<a href='" + polurl + "' target=_blank>" + k_data[d]['POLICY']  + "</a>";
-                polhtml = polhtml + '<li> ' + k_data[d]['ORGANISATION'] + ' ' + name + '</li>';
-	        }
+		    polhtml = polhtml + "<h5>" + thisdisc + "</h5>";
+	 	    var polvalue = data['other'][thistopic][thisdisc];
+	            for (d in polvalue)
+		    {
+			k_data = data['other'][thistopic][thisdisc];
+                	polurl = "#";
+                	found = 1;
+                	if (k_data[d]['POLICY LINK'])
+                	{  
+                   	    polurl = k_data[d]['POLICY LINK'];
+                	}
+	        	name = "<a href='" + polurl + "' target=_blank>" + k_data[d]['POLICY']  + "</a>";
+                	polhtml = polhtml + '<li> ' + k_data[d]['ORGANISATION'] + ' ' + name + '</li>';
+	            }
+	        };
 	    };
-	};
+	    polhtml = polhtml + "</ul>";
+	}
     };
   $("#policies").empty();
   $("#policies").html("<h4><b>Policies that match your selection</b></h4>");
