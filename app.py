@@ -314,11 +314,12 @@ def webfilter():
 	thisfilter[topic] = searchfilter[topic]
 	try:
             outmatrix = mainfilter(df, thisfilter) #filtertodict(newfilterparams))
-	    result[topic] = outmatrix[topic]
+	    if outmatrix[topic]:
+	        result[topic] = outmatrix[topic]
 	except:
 	    skip = 1
 	if not topic in result:
-	    result[topic] = [ { 'result': noresult } ]
+	    result[topic] = [ { 'result': noresult, 'status': 'other' } ]
 	    c = read_contents("CONTENTS")
 	    disc = {}
 	    common = collections.OrderedDict()
