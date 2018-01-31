@@ -312,10 +312,12 @@ def webfilter():
     for topic in searchfilter:
 	thisfilter = {}
 	thisfilter[topic] = searchfilter[topic]
-	if topic:
+	try:
             outmatrix = mainfilter(df, thisfilter) #filtertodict(newfilterparams))
 	    result[topic] = outmatrix[topic]
-	if not outmatrix[topic]:
+	except:
+	    skip = 1
+	if not topic in result:
 	    result[topic] = [ { 'result': noresult } ]
 	    c = read_contents("CONTENTS")
 	    disc = {}
