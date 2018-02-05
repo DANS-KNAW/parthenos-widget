@@ -374,6 +374,7 @@ def webfilter():
 
 @app.route("/contents", methods=['GET', 'POST'])
 def webcontents():
+    return contents('CONTENTS')
     if request.data:
         qinput = json.loads( request.data )
         if 'selected' in qinput:
