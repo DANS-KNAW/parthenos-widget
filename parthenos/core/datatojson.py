@@ -45,17 +45,19 @@ def mainfilter(df, params):
     data = data.replace(np.nan, '', regex=True)
     ymatrix = data[selection]
 
+    topic2fair = {}
     for col in selected:
+	topic2fair[col] = df.ix[0][col]
         rowarray = []
         for row in ymatrix.index:
-            rowsubset = ymatrix.ix[row]
             rowresult = {}
+	    rowsubset = ymatrix.ix[row]
             if rowsubset[col] == 'X':
                 d = rowsubset.to_dict() #orient='records')
                 rowarray.append(d)
         result[col] = rowarray
 
-    return result
+    return (result, topic2fair)
 
 def contents(tabname):
     df = pd.read_excel(MATRIX, sheetname=tabname, header=None, skiprows=0)
