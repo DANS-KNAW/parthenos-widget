@@ -284,6 +284,8 @@ def webfilter():
              newfilterparams.append(str(name))
     except:
 	return 'no data'
+    if not re.search('topic', str(newfilterparams)):
+	return 'no topic'
 
     cache = {}
     #newfilterparams = ["community:RESEARCH COMMUNITY","discipline:SOCIAL SCIENCE","topic:CITATION GUIDELINES", "topic:PRIVACY AND SENSITIVE DATA"]
@@ -308,21 +310,34 @@ def webfilter():
     # MOD
     common = {}
     result = {}
+    datatopics = {}
     noresult = "No results for this topic. Here you can find suggestions from other disciplines"
     for topic in searchfilter:
 	thisfilter = {}
+	found = {}
 	thisfilter[topic] = searchfilter[topic]
+	(outmatrix, fair) = mainfilter(df, thisfilter) #filtertodict(newfilterparams))
+
+	# FAIR
 	try:
-            outmatrix = mainfilter(df, thisfilter) #filtertodict(newfilterparams))
+            #(outmatrix, fair) = mainfilter(df, thisfilter) #filtertodict(newfilterparams))
 	    if outmatrix[topic]:
 		outmatrix['result'] = 'found'
 		outmatrix['status'] = 'ok'
-		result[topic] = outmatrix #{ 'result': 'found', 'status': 'ok', 'data': outmatrix[topic] } ]
+	 	topics = []
+		for utopic in fair:
+		    topics.append(utopic)
+		outmatrix['topics'] = topics
+		found[topic] = fair[topic]
+		datatopics[topic] = fair[topic]
+		#result[fair[topic]] = outmatrix #{ 'result': 'found', 'status': 'ok', 'data': outmatrix[topic] } ]
+		result[topic] = outmatrix[topic]
 	except:
 	    skip = 1
 
-	if not topic in result:
-	    result[topic] = { 'result': noresult, 'status': 'other' } 
+	if not topic in found:
+	    result[topic] = { 'result': noresult, 'status': 'not found', 'topic': fair[topic] } 
+	    datatopics[topic] = fair[topic]
 	    c = read_contents("CONTENTS")
 	    disc = {}
 	    common = collections.OrderedDict()
@@ -331,7 +346,7 @@ def webfilter():
 		    if name not in cache:
 		        cache[name] = dataloader(name)
 		    try:
-		        outmatrix = mainfilter(cache[name], thisfilter)
+		        (outmatrix, fair) = mainfilter(cache[name], thisfilter)
 			dmatrix = {}
 			dmatrix[name] = outmatrix[topic]
 		        common[topic] = dmatrix
@@ -343,12 +358,29 @@ def webfilter():
         other['result'] = result
     if common:
         other['other'] = common
+
+    grouptopics = {} 
+    for topic in datatopics:
+	if datatopics[topic] in grouptopics:
+	    groupx = grouptopics[datatopics[topic]]
+	    groupx.append(topic)
+	    grouptopics[datatopics[topic]] = groupx
+	else:
+	    grouptopics[datatopics[topic]] = [ topic ]
+
+    other['topics'] = grouptopics
     data = json.dumps(other, ensure_ascii=False, sort_keys=True, indent=4)
     return Response(data,  mimetype='application/json')
 
-@app.route("/contents")
+@app.route("/contents", methods=['GET', 'POST'])
 def webcontents():
-    return contents('CONTENTS')
+    if request.data:
+        qinput = json.loads( request.data )
+        if 'selected' in qinput:
+	    return 'All disciplines'
+	return 'All disciplines selected'
+    else:
+        return contents('CONTENTS')
 
 @app.route("/list")
 def showlist():
