@@ -36,7 +36,7 @@ d3.json(principlesurl, function(pdata) {
   }
   polhtml = polhtml + "</table>";
   $("#principles").empty();
-  $("#principles").html("<h4><b>All Parthenos High-Level Principles</b></h4>");
+  $("#principles").html("<h4><b>All PARTHENOS Guidelines</b></h4><div style='width:100%;float:center;'><a href='/'>Findable</a>&nbsp;<a href='/'>Accessable</a>&nbsp;<a href='/'>Interoperable</a>&nbsp;<a href='/'>Reusable</a>&nbsp;</div>");
   $(polhtml).appendTo('#principles');
 })
 
@@ -107,6 +107,7 @@ d3.json(apiurl, function(data) {
     var polhtml = '';
     var firstvalue = '';
     for (thistopic in data['topics']) {
+	alert(thistopic);
 	var found = 0;
 	if (thistopic)
 	{
@@ -137,16 +138,16 @@ d3.json(apiurl, function(data) {
                             value = '';
                 	}
 			polurl = "#";
-			if (k_data['POLICY LINK'])
+			if (k_data['policy link'])
 			{
-		   	    polurl = k_data['POLICY LINK'];
+		   	    polurl = k_data['policy link'];
 			    found = 1;
 			}
 
-			if (k_data['POLICY'])
+			if (k_data['policy'])
 			{
-                    	    name = "<a href='" + polurl + "' target=_blank>" + k_data['POLICY']  + "</a>";
-                    	    polhtml = polhtml + '<li>' + k_data['ORGANISATION'] + ' ' + name + '</li>';
+                    	    name = "<a href='" + polurl + "' target=_blank>" + k_data['policy']  + "</a>";
+                    	    polhtml = polhtml + '<li>' + k_data['organisation'] + ' ' + name + '</li>';
 			}
         	};
 	     }
@@ -169,12 +170,12 @@ d3.json(apiurl, function(data) {
 		    	    {
 				k_data = polvalue[d];
                 		polurl = "#";
-                		if (k_data['POLICY LINK'])
+                		if (k_data['policy link'])
                 		{  
-                   	    	    polurl = k_data['POLICY LINK'];
+                   	    	    polurl = k_data['policy link'];
                 		}
-	        		name = "<a href='" + polurl + "' target=_blank>" + k_data['POLICY']  + "</a>";
-                		polhtml = polhtml + '<li> ' + k_data['ORGANISATION'] + ' ' + name + '</li>';
+	        		name = "<a href='" + polurl + "' target=_blank>" + k_data['policy']  + "</a>";
+                		polhtml = polhtml + '<li> ' + k_data['organisation'] + ' ' + name + '</li>';
 	            	     }
 	        	};
 	    	    };
