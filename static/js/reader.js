@@ -107,7 +107,6 @@ d3.json(apiurl, function(data) {
     var polhtml = '';
     var firstvalue = '';
     for (thistopic in data['topics']) {
-	alert(thistopic);
 	var found = 0;
 	if (thistopic)
 	{
