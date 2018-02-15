@@ -249,7 +249,7 @@ def bestpractice():
 
 @app.route("/principles")
 def principles():
-    return getprinciples("HIGH-LEVEL PRINCIPLES")
+    return getprinciples("PARTHENOS guidelines")
 
 @app.route("/xmlmatrix")
 def export2xml():
