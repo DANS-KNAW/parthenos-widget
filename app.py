@@ -76,7 +76,7 @@ def matrix2xml():
     sheetid = 0
     xmlcontent = "<?xml version=\"1.0\"?>"
     xmlcontent = xmlcontent + "\n<Disciplines>"
-    data = read_contents("CONTENTS")
+    data = read_contents("contents")
     content = {}
     for index in data.index:
         row = data.ix[index]
@@ -125,12 +125,12 @@ def getbestpractice(thistabname):
     xl = pd.ExcelFile(MATRIX)
     df = ''
     for tabname in xl.sheet_names:
-        #if tabname != 'CONTENTS':
+        #if tabname != 'contents':
         if tabname == thistabname:
             df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
 
     bestpr = []
-    fields = ['BEST PRACTICE']
+    fields = ['best practice']
     for x in df[fields].index:
         thisvalue = str(df[fields].ix[x][0])
         if thisvalue != 'nan':
@@ -141,7 +141,7 @@ def getbestpractice(thistabname):
     return Response(cdata,  mimetype='application/json')
 
 def contents(tabname):
-    data = read_contents("CONTENTS")
+    data = read_contents("contents")
     content = {}
     for index in data.index:
         row = data.ix[index]
@@ -155,7 +155,7 @@ def contents(tabname):
     return Response(cdata,  mimetype='application/json')
 
 def list():
-    data = read_contents("CONTENTS")
+    data = read_contents("contents")
     tablist = {}
     tabs = []
     for name in data['name']:
@@ -185,7 +185,7 @@ def subtopics(thistabname):
     xl = pd.ExcelFile(MATRIX)
     df = ''
     for tabname in xl.sheet_names:
-        #if tabname != 'CONTENTS':
+        #if tabname != 'contents':
         if tabname == thistabname:
             df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
 
@@ -209,7 +209,7 @@ def subtopics(thistabname):
 def datacache(cachedir):
     xl = pd.ExcelFile(MATRIX)
     for tabname in xl.sheet_names:
-        if tabname == 'CONTENTS':
+        if tabname == 'contents':
             df = pd.read_excel(MATRIX, sheetname=tabname, header=None, skiprows=0)
         else:
             df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
@@ -257,7 +257,7 @@ def export2xml():
 
 @app.route("/verification")
 def verify():
-    c = read_contents("CONTENTS")
+    c = read_contents("contents")
     topics = []
     columns = {}
     for name in c['name']:
@@ -288,7 +288,6 @@ def webfilter():
 	return 'no topic'
 
     cache = {}
-    #newfilterparams = ["community:RESEARCH COMMUNITY","discipline:SOCIAL SCIENCE","topic:CITATION GUIDELINES", "topic:PRIVACY AND SENSITIVE DATA"]
     params = filtertodict(newfilterparams)
     discipline = ''
     searchfilter = {}
@@ -338,7 +337,7 @@ def webfilter():
 	if not topic in found:
 	    result[topic] = { 'result': noresult, 'status': 'not found', 'topic': fair[topic] } 
 	    datatopics[topic] = fair[topic]
-	    c = read_contents("CONTENTS")
+	    c = read_contents("contents")
 	    disc = {}
 	    common = collections.OrderedDict()
 	    for name in c['name']:
@@ -374,14 +373,14 @@ def webfilter():
 
 @app.route("/contents", methods=['GET', 'POST'])
 def webcontents():
-    return contents('CONTENTS')
+    return contents('contents')
     if request.data:
         qinput = json.loads( request.data )
         if 'selected' in qinput:
 	    return 'All disciplines'
 	return 'All disciplines selected'
     else:
-        return contents('CONTENTS')
+        return contents('contents')
 
 @app.route("/list")
 def showlist():
