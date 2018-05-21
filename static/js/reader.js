@@ -67,6 +67,7 @@ d3.json(bestpracticesurl, function(bdata) {
 .header("Content-Type","application/json")
 .send("POST",senddata);
 
+flag = 1;
 if (flag == 1) {
 	d3.json(topicsurl, function(cdata) {
     	var tophtml = '<br><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
@@ -209,7 +210,7 @@ d3.json(contentsurl, function(cdata) {
         {
 	    var thisval = known[k_data];
 	    if (!thisval) {
-		conthtml = conthtml + '<p><input name="comm" type="checkbox" value="community:' + k_data + '" id="input-10a" data-toggle="checkbox-x"> ' + k_data + '</p>';
+		topichtml = topichtml + '<p>&nbsp;&nbsp;<b>' + k_data + '</b></p>';
 	    };
             topichtml = topichtml + '<p><input name="disc" type="checkbox" value="discipline:' + k + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p>';
 	    known[k_data] = k;
@@ -217,10 +218,10 @@ d3.json(contentsurl, function(cdata) {
     }
     conthtml = conthtml + "</ul>";
     topichtml = topichtml + '</ul>';
+    conthtml = topichtml + conthtml;
     $("#communityload").empty();
     $('#communityload').html(conthtml);
 
-    $(topichtml).appendTo('#discipline');
 });
 
 $(function() {
