@@ -36,7 +36,7 @@ d3.json(principlesurl, function(pdata) {
   }
   polhtml = polhtml + "</table>";
   $("#principles").empty();
-  $("#principles").html("<h4><b>All PARTHENOS Guidelines</b></h4><div style='width:100%;float:center;'><a href='/'>Findable</a>&nbsp;<a href='/'>Accessable</a>&nbsp;<a href='/'>Interoperable</a>&nbsp;<a href='/'>Reusable</a>&nbsp;</div>");
+  $("#principles").html("<h4><b>All PARTHENOS Guidelines</b></h4>");
   $(polhtml).appendTo('#principles');
 })
 
