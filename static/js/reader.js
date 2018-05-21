@@ -47,7 +47,7 @@ for (name in cdata) {
 	postdata[cdata[name]] = 1;	
 };
 
-apiurl = "/webfilter";
+apiurl = "/pws/webfilter";
 var senddata = JSON.stringify(postdata);
 
 d3.json(bestpracticesurl, function(bdata) {
@@ -62,7 +62,6 @@ d3.json(bestpracticesurl, function(bdata) {
   console.log(polhtml);
   $("#bestpractice").empty();
   $("#bestpractice").html("<h4><b>Best Practices</b></h4>");
-  $(polhtml).appendTo('#bestpractice');
 })
 .header("Content-Type","application/json")
 .send("POST",senddata);
