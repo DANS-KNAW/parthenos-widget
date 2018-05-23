@@ -203,7 +203,7 @@ d3.json(contentsurl, function(cdata) {
         tabnum = tabnum + 1;
         var k_data = cdata['contents'][k];
         if (!k_data) {
-	    conthtml = conthtml + '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well"><p><input name="comm" type="checkbox" value="community:' + k + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p></ul>';
+	    conthtml = conthtml + '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well"><p><input name="disc" type="checkbox" value="discipline:' + k + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p></ul>';
         }
         else
         {
