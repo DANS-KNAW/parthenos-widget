@@ -194,7 +194,7 @@ d3.json(apiurl, function(data) {
 
 d3.json(contentsurl, function(cdata) {
     var conthtml = '<h4><b>Select your Community</b></h4><div class="tab-pane active" id="godiscipline" style="float:right"><a class="btn btn-primary btnNext">Next</a></div><br /><br />';
-    var conthtml = '<br><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+    var conthtml = '';
 
     topichtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     var tabnum = 0;
@@ -203,7 +203,7 @@ d3.json(contentsurl, function(cdata) {
         tabnum = tabnum + 1;
         var k_data = cdata['contents'][k];
         if (!k_data) {
-	    conthtml = conthtml + '<p><input name="comm" type="checkbox" value="community:' + k + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p>';
+	    conthtml = conthtml + '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well"><p><input name="comm" type="checkbox" value="community:' + k + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p></ul>';
         }
         else
         {
@@ -215,7 +215,6 @@ d3.json(contentsurl, function(cdata) {
 	    known[k_data] = k;
         }
     }
-    conthtml = conthtml + "</ul>";
     topichtml = topichtml + '</ul>';
     conthtml = topichtml + conthtml;
     $("#communityload").empty();
