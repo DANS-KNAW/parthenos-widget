@@ -340,15 +340,17 @@ def webfilter():
 	    c = read_contents("contents")
 	    disc = {}
 	    common = collections.OrderedDict()
+	    dmatrix = {}
 	    for name in c['name']:
 	        if name != discipline:
 		    if name not in cache:
 		        cache[name] = dataloader(name)
 		    try:
 		        (outmatrix, fair) = mainfilter(cache[name], thisfilter)
-			dmatrix = {}
-			dmatrix[name] = outmatrix[topic]
-		        common[topic] = dmatrix
+			# DANS
+			if outmatrix[topic]:
+			    dmatrix[name] = outmatrix[topic]
+		            common[topic] = dmatrix
 		    except:
 		        skip = 1
 		
@@ -406,4 +408,5 @@ def webtopics():
 
 if __name__ == '__main__':
     s = datacache(cachedir)
-    app.run(host='0.0.0.0', port=8081)
+    #app.run(host='0.0.0.0', port=8081)
+    app.run(host='0.0.0.0', port=8082)
