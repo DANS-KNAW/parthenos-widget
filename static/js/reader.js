@@ -102,7 +102,7 @@ if (flag == 1) {
 d3.json(apiurl, function(data) {
     console.log(data);
   $("#policies").empty();
-  $("#policies").html("<img src='/static/loading.gif'>");
+  $("#policies").html("<img src='/pws/static/loading.gif'>");
   $(polhtml).appendTo('#policies');
     var polhtml = '';
     var firstvalue = '';
@@ -160,9 +160,9 @@ d3.json(apiurl, function(data) {
 		    if (data['other'])
 	    	    {
 	        	polhtml = polhtml + "No results for this topic.";
+			polhtml = polhtml + " Here you can find some suggestions from other disciplines:";
 	        	for (thisdisc in data['other'][keytopic]) 
 			{
-			    polhtml = polhtml + " Here you can find some suggestions from other disciplines:";
 		    	    polhtml = polhtml + "<h5>" + thisdisc + "</h5>";
 	 	    	    var polvalue = data['other'][keytopic][thisdisc];
 	             	    for (d in polvalue)
@@ -174,9 +174,11 @@ d3.json(apiurl, function(data) {
                    	    	    polurl = k_data['policy link'];
                 		}
 	        		name = "<a href='" + polurl + "' target=_blank>" + k_data['policy']  + "</a>";
+				if (polurl.length > 3) {
                 		polhtml = polhtml + '<li> ' + k_data['organisation'] + ' ' + name + '</li>';
+				}
 	            	     }
-	        	};
+			};
 	    	    };
 
 		polhtml = polhtml + "</ul>";
