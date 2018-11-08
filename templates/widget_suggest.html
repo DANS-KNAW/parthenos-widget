@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Parthenos Widget</title>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link href="/css/bootstrap-tabs-x.css" media="all" rel="stylesheet" type="text/css"/>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/static/js/js/bootstrap-tabs-x.js" type="text/javascript"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script>
+	weburl = "/pws";
+        polurl = weburl + "/?policy=";
+        contentsurl = weburl + '/contents';
+        topicsurl = weburl + '/topics';
+
+	apiurl = "/widget/policies";
+	principlesurl = weburl + '/principles';
+	bestpracticesurl = weburl + '/bestpractice';
+	apiurl_list = weburl + "/list";
+
+$('.btn').on('click', function() {
+    var $this = $(this);
+  $this.button('loading');
+    setTimeout(function() {
+       $this.button('reset');
+   }, 8000);
+});
+    </script>
+
+</head>
+<script src="http://twitter.github.com/bootstrap/assets/js/bootstrap.js "></script>
+<script src="/pws/static/js/reader.js" type="text/javascript"></script>
+<body>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">You can suggest any new or missing policy by filling in this form</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+        <div class="form-group">
+                <label for="name">Name</label>
+                <input type="name" id="exampleInputEmail1" placeholder="name">
+                <label for="exampleInputEmail1">E-mail</label>
+                <input type="email" id="ex2" placeholder="Email">
+        </div>
+        <div class="form-group">
+        <label for="institution">Institution</label>
+        <input type="inst" class="form-control" id="institution" placeholder="Institution">
+        </div>
+        <div class="form-group">
+        <label for="policy">Policy</label>
+        <input type="pol" class="form-control" id="policy" placeholder="Policy">
+        </div>
+        <div class="form-group">
+        <label for="linkpolicy">Link to Policy</label>
+        <input type="linkpol" class="form-control" id="policy" placeholder="Link Policy">
+        </div>
+        <div class="form-group">
+        <label for="community">Community</label>
+                <div class="row">
+                        <div class="col-xs-6 col-md-4 col-md-offset-1">
+                        <div class="checkbox"><input type="checkbox"><label>Research community</label></div>
+                        </div>
+                        <div class="col-xs-6 col-md-4 col-md-offset-1">
+                        <div class="checkbox"><input type="checkbox"><label>Cultural Heritage Institute</label></div>
+                        </div>
+                </div>
+                <div class="row">
+                        <div class="col-xs-6 col-md-4 col-md-offset-1">
+                        <div class="checkbox"><input type="checkbox"><label>Digital repository</label></div>
+                        </div>
+                        <div class="col-xs-6 col-md-4 col-md-offset-1">
+                        <div class="checkbox"><input type="checkbox"><label>Research infrastructure</label></div>
+                        </div>
+                </div>
+        <div class="form-group">
+        <label for="topic">Topic (FAIR)</label>
+                <div class="row">
+                        <div class="col-xs-6 col-md-4 col-md-offset-1">
+                        <div class="checkbox"><input type="checkbox"><label>Findable</label></div>
+                        </div>
+                        <div class="col-xs-6 col-md-4 col-md-offset-1">
+                        <div class="checkbox"><input type="checkbox"><label>Interoperable</label></div>
+                        </div>
+                </div>
+                        <div class="row">
+                        <div class="col-xs-6 col-md-4 col-md-offset-1">
+                        <div class="checkbox"><input type="checkbox"><label>Accessable</label></div>
+                        </div>
+                        <div class="col-xs-6 col-md-4 col-md-offset-1">
+                        <div class="checkbox"><input type="checkbox"><label>Reusable</label></div>
+                        </div>
+                </div>
+
+                </div>
+        </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Suggest policy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+<div class="row">
+    <div class="col-md-6">
+        <div class="tabs-x tabs-above">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="active"><a href="#community" role="tab" data-toggle="tab"><i
+                        class="glyphicon glyphicon-home"></i> Community</a></li>
+                <li><a href="#topics" role="tab-kv" data-toggle="tab"><i class="glyphicon glyphicon-user"></i>
+                    Topic</a></li>
+                <li><a href="#policies" role="tab-kv" data-toggle="tab"><i class="glyphicon glyphicon-user"></i>
+                    Policies</a></li>
+                <li><a href="#principles" role="tab-kv" data-toggle="tab"><i class="glyphicon glyphicon-user"></i>
+                    Guidelines</a></li>
+                <li>
+		<a class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+  		Suggest policy
+		</a>
+                </li>
+            </ul>
+            <div id="myTabContent-kv-1" class="tab-content">
+                <div class="tab-pane fade in active" id="community">
+		<h4><b>Select your Community</b></h4>
+			&nbsp;
+    			<div class="tab-pane active" id="godiscipline" style="float:right">
+        		<a class="btn btn-primary btnNext">Next</a>
+			</div>
+			<div id="communityload"><br /><br /><img src='/pws/static/loading.gif'></div>
+                </div>
+                <div class="tab-pane fade" id="topics">
+                <h4><b>Select your Topics</b>
+                <div class="tab-pane active" style="float:right" id="gotopic">
+                <a class="btn btn-primary btnPrevious">Back</a> 
+		<button type="button" class="btn btn-primary btnNext " id="load" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Processing">Next</button>
+		</div>
+		<div class="tab-pane" style="float:center" id="topicsdata"><br /><br /><img src='/pws/static/loading.gif'></div>
+		</h4>
+                </div>
+                <div class="tab-pane fade" id="policies">
+                <h4><b>Policies that match your selection</b>
+		<div class="tab-pane active" style="float:right" id="gotopic">
+                <a class="btn btn-primary btnPrevious">Back</a>
+		<a class="btn btn-primary btnNext">Print</a>
+                </div>
+		</h4>
+                </div>
+                <div class="tab-pane fade" id="principles">
+                <h4><b>High-Level Principles</b>
+                <div class="tab-pane active" style="float:right" id="goprinciples">
+                <a class="btn btn-primary btnPrevious">Back</a>
+                </div>
+                </h4>
+                </div>
+            </div>
+        </div>
+        <!-- /tabs-above -->
+    </div>
+    <!-- /col-md-6 -->
+<script>
+
+$('.btnNext').click(function(){
+  $('.nav-tabs > .active').next('li').find('a').trigger('click');
+	index = $(this).index();
+        $(':checkbox:checked').each(function(i){
+          val[i] = $(this).val();
+        });
+	result(val,index);
+});
+  $('.btnPrevious').click(function(){
+  $('.nav-tabs > .active').prev('li').find('a').trigger('click');
+  alert(val);
+});
+</script>
+</div>
+<!-- /row -->
+</div>
+</body>
+</html>
