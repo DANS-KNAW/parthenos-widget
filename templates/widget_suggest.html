@@ -7,7 +7,7 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <link href="/css/bootstrap-tabs-x.css" media="all" rel="stylesheet" type="text/css"/>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" type="text/javascript"></script>
-    <script src="/static/js/js/bootstrap-tabs-x.js" type="text/javascript"></script>
+    <script src="/pws/static/js/bootstrap-tabs-x.js" type="text/javascript"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script>
 	weburl = "/pws";
@@ -50,19 +50,19 @@ $('.btn').on('click', function() {
                 <input type="email" id="ex2" placeholder="Email">
         </div>
         <div class="form-group">
-        <label for="institution">Institution</label>
-        <input type="inst" class="form-control" id="institution" placeholder="Institution">
+        	<label for="institution">Institution</label>
+        	<input type="inst" class="form-control" id="institution" placeholder="Institution">
         </div>
         <div class="form-group">
-        <label for="policy">Policy</label>
-        <input type="pol" class="form-control" id="policy" placeholder="Policy">
+        	<label for="policy">Policy</label>
+        	<input type="pol" class="form-control" id="policy" placeholder="Policy">
         </div>
         <div class="form-group">
-        <label for="linkpolicy">Link to Policy</label>
-        <input type="linkpol" class="form-control" id="policy" placeholder="Link Policy">
+        	<label for="linkpolicy">Link to Policy</label>
+        	<input type="linkpol" class="form-control" id="policy" placeholder="Link Policy">
         </div>
         <div class="form-group">
-        <label for="community">Community</label>
+        	<label for="community">Community</label>
                 <div class="row">
                         <div class="col-xs-6 col-md-4 col-md-offset-1">
                         <div class="checkbox"><input type="checkbox"><label>Research community</label></div>
@@ -79,8 +79,9 @@ $('.btn').on('click', function() {
                         <div class="checkbox"><input type="checkbox"><label>Research infrastructure</label></div>
                         </div>
                 </div>
+	</div>
         <div class="form-group">
-        <label for="topic">Topic (FAIR)</label>
+        	<label for="topic">Topic (FAIR)</label>
                 <div class="row">
                         <div class="col-xs-6 col-md-4 col-md-offset-1">
                         <div class="checkbox"><input type="checkbox"><label>Findable</label></div>
@@ -89,23 +90,20 @@ $('.btn').on('click', function() {
                         <div class="checkbox"><input type="checkbox"><label>Interoperable</label></div>
                         </div>
                 </div>
-                        <div class="row">
+                <div class="row">
                         <div class="col-xs-6 col-md-4 col-md-offset-1">
                         <div class="checkbox"><input type="checkbox"><label>Accessable</label></div>
                         </div>
                         <div class="col-xs-6 col-md-4 col-md-offset-1">
                         <div class="checkbox"><input type="checkbox"><label>Reusable</label></div>
-                        </div>
-                </div>
-
                 </div>
         </div>
-
+        </div>
+        <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Suggest policy</button>
+        </div>
         </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Suggest policy</button>
-      </div>
+        </div>
     </div>
   </div>
 </div>
