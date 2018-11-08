@@ -226,7 +226,7 @@ def read_contents(tabname):
 
 @app.route("/")
 def main():
-    return render_template('widget.html')
+    return render_template('widget_suggest.html')
 
 @app.route("/bestpractice", methods=['GET', 'POST'])
 def bestpractice():
