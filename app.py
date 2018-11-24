@@ -11,6 +11,8 @@ from flask import Flask, redirect, make_response, Response, render_template, req
 #from tests.config import MATRIX
 #from parthenos.core.datatojson import *
 import uuid
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 import httpretty
 import requests
 import os.path
@@ -33,6 +35,35 @@ try:
     os.stat(cachedir)
 except:
     os.mkdir(cachedir)
+
+def googlespreadsheet(form):
+    apikey = "apikey.json"
+    if not os.path.isfile(apikey):
+        return False
+    scope = ['https://spreadsheets.google.com/feeds']
+    creds = ServiceAccountCredentials.from_json_keyfile_name(apikey, scope)
+    gc = gspread.authorize(creds)
+    worksheetID = 0
+
+    sid = "1ZpUkHO6VA5LDJEpmzc0_sTR_WKK-HkmZsNoHTULCAj0"
+    wks = gc.open_by_key(sid)
+    worksheet = wks.sheet1
+    users = worksheet.get_all_values()
+    worksheet = wks.get_worksheet(worksheetID)
+    queries = worksheet.get_all_values()
+    if not queries:
+        k = 1 
+        for item in sorted(form):
+            worksheet.update_cell(1, k, item)
+            k = k + 1
+        queries = worksheet.get_all_values()
+    newID = len(queries) + 1
+    aform = [""]
+    for item in sorted(form):
+        aform.append(form[item])
+    for k in range(1, len(aform)):
+        worksheet.update_cell(newID, k, aform[k])
+    return True
 
 def frametoxml(df):
     allvalues = {}
@@ -233,6 +264,7 @@ def main():
 @app.route("/suggest", methods = ['POST'])
 def suggest():
     form = request.form
+    googlespreadsheet(form)
     # Save in text file
     textfile = "./data/suggestions.txt"
     jsonfile = "./data/suggestions.json"
