@@ -50,19 +50,19 @@ $('.btn').on('click', function() {
                 <input type="email" id="ex2" placeholder="Email">
         </div>
         <div class="form-group">
-        	<label for="institution">Institution</label>
-        	<input type="inst" class="form-control" id="institution" placeholder="Institution">
-        </div>
-        <div class="form-group">
-        	<label for="policy">Policy</label>
+        	<label for="policy">Title of policy</label>
         	<input type="pol" class="form-control" id="policy" placeholder="Policy">
         </div>
         <div class="form-group">
-        	<label for="linkpolicy">Link to Policy</label>
-        	<input type="linkpol" class="form-control" id="policy" placeholder="Link Policy">
+        	<label for="linkpolicy">Link to policy</label>
+        	<input type="linkpol" class="form-control" id="policylink" placeholder="Link Policy">
         </div>
         <div class="form-group">
-        	<label for="community">Community</label>
+                <label for="remarks">Remarks</label>
+                <input type="linkpol" class="form-control" id="remarks" placeholder="Remarks about this policy">
+        </div>
+        <div class="form-group">
+        	<label for="community">The suggested policy is related to the following communities</label>
                 <div class="row">
                         <div class="col-xs-6 col-md-4 col-md-offset-1">
                         <div class="checkbox"><input type="checkbox"><label>Research community</label></div>
@@ -81,7 +81,7 @@ $('.btn').on('click', function() {
                 </div>
 	</div>
         <div class="form-group">
-        	<label for="topic">Topic (FAIR)</label>
+        	<label for="topic">The suggested policy is related to the following topics</label>
                 <div class="row">
                         <div class="col-xs-6 col-md-4 col-md-offset-1">
                         <div class="checkbox"><input type="checkbox"><label>Findable</label></div>
@@ -98,9 +98,6 @@ $('.btn').on('click', function() {
                         <div class="checkbox"><input type="checkbox"><label>Reusable</label></div>
                 </div>
         </div>
-        </div>
-        <div class="modal-footer">
-        <button type="submit" class="btn btn-primary">Suggest policy</button>
         </div>
         </form>
         </div>
@@ -121,11 +118,6 @@ $('.btn').on('click', function() {
                     Policies</a></li>
                 <li><a href="#principles" role="tab-kv" data-toggle="tab"><i class="glyphicon glyphicon-user"></i>
                     Guidelines</a></li>
-                <li>
-		<a class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-  		Suggest policy
-		</a>
-                </li>
             </ul>
             <div id="myTabContent-kv-1" class="tab-content">
                 <div class="tab-pane fade in active" id="community">
@@ -147,9 +139,16 @@ $('.btn').on('click', function() {
                 </div>
                 <div class="tab-pane fade" id="policies">
                 <h4><b>Policies that match your selection</b>
+                <a class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                Suggest policy
+                </a>
+
 		<div class="tab-pane active" style="float:right" id="gotopic">
                 <a class="btn btn-primary btnPrevious">Back</a>
 		<a class="btn btn-primary btnNext">Print</a>
+                </div>
+                <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Suggest policy</button>
                 </div>
 		</h4>
                 </div>
