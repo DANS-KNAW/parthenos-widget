@@ -16,6 +16,7 @@ import requests
 import pandas as pd
 import simplejson
 import json
+import codecs
 app = Flask(__name__)
 
 basedir = "%s" % os.getenv("HOME")
@@ -194,7 +195,7 @@ def subtopics(thistabname):
     phrase = "Guidelines to make your data"
     topics = {}
     for name in fields:
-        x = df.ix[0] == name
+        x = df.ix[0]# == name
         y = x[x == True]
         longname = "%s %s" % (phrase, name.lower())
         topics[longname] = y.index.tolist()
@@ -227,6 +228,16 @@ def read_contents(tabname):
 @app.route("/")
 def main():
     return render_template('widget_suggest.html')
+
+@app.route("/suggest", methods = ['POST'])
+def suggest():
+    form = request.form
+    f = open("./data/suggestions.txt",'a')
+    for item in form:
+        f.write("%s=%s\n" % (item, form[item]))
+    f.write("\n")
+    f.close()
+    return "Policy %s was suggested" % form['title']
 
 @app.route("/bestpractice", methods=['GET', 'POST'])
 def bestpractice():
