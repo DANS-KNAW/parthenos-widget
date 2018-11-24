@@ -13,6 +13,7 @@ from flask import Flask, redirect, make_response, Response, render_template, req
 import uuid
 import httpretty
 import requests
+import os.path
 import pandas as pd
 import simplejson
 import json
@@ -195,7 +196,7 @@ def subtopics(thistabname):
     phrase = "Guidelines to make your data"
     topics = {}
     for name in fields:
-        x = df.ix[0]# == name
+        x = df.ix[0] == name
         y = x[x == True]
         longname = "%s %s" % (phrase, name.lower())
         topics[longname] = y.index.tolist()
@@ -232,12 +233,47 @@ def main():
 @app.route("/suggest", methods = ['POST'])
 def suggest():
     form = request.form
-    f = open("./data/suggestions.txt",'a')
+    # Save in text file
+    textfile = "./data/suggestions.txt"
+    jsonfile = "./data/suggestions.json"
+    f = open(textfile,'a')
     for item in form:
         f.write("%s=%s\n" % (item, form[item]))
     f.write("\n")
     f.close()
-    return "Policy %s was suggested" % form['title']
+
+    # Save in json
+    if os.path.isfile(jsonfile):
+        f = codecs.open(jsonfile, "r", "utf-8")
+        data = json.loads(f.read())
+        f.close()
+        items = data['data']
+        items.append(form)
+        data['data'] = items
+        f = codecs.open(jsonfile, "w", "utf-8")
+        f.write(json.dumps(data).encode('utf-8'))
+        f.close()
+    else:
+        f = codecs.open(jsonfile, "w", "utf-8")
+        data = {}
+        items = []
+        items.append(form)
+        data['data'] = items
+        f.write(json.dumps(data).encode('utf-8'))
+        f.close()
+       
+    return "Thank you very much for your submission, policy \"%s\" was suggested." % form['title']
+
+@app.route("/suggested")
+def suggested():
+    jsonfile = "./data/suggestions.json"
+    if os.path.isfile(jsonfile):
+        f = codecs.open(jsonfile, "r", "utf-8")
+        data = json.loads(f.read())
+        return Response(json.dumps(data), mimetype='application/json; charset=utf-8')
+    else:
+        return "Suggested policies not found..."
+    
 
 @app.route("/bestpractice", methods=['GET', 'POST'])
 def bestpractice():
