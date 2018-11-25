@@ -36,7 +36,7 @@ try:
 except:
     os.mkdir(cachedir)
 
-def googlespreadsheet(form):
+def googlespreadsheet(fields, form):
     apikey = "apikey.json"
     if not os.path.isfile(apikey):
         return False
@@ -53,14 +53,18 @@ def googlespreadsheet(form):
     queries = worksheet.get_all_values()
     if not queries:
         k = 1 
-        for item in sorted(form):
+        for item in fields:
             worksheet.update_cell(1, k, item)
             k = k + 1
         queries = worksheet.get_all_values()
     newID = len(queries) + 1
     aform = [""]
-    for item in sorted(form):
-        aform.append(form[item])
+    for item in fields:
+        if item in form:
+            aform.append(form[item])
+        else:
+            aform.append(None)
+
     for k in range(1, len(aform)):
         worksheet.update_cell(newID, k, aform[k])
     return True
@@ -264,7 +268,8 @@ def main():
 @app.route("/suggest", methods = ['POST'])
 def suggest():
     form = request.form
-    googlespreadsheet(form)
+    fields = ["author", "email", "link", "remarks", "title", "Community: Research community", "Community: Cultural Heritage Institute", "Community: Digital repository", "Community: Research infrastructure", "Findable", "Interoperable", "Accessable", "Reusable"]
+    googlespreadsheet(fields, form)
     # Save in text file
     textfile = "./data/suggestions.txt"
     jsonfile = "./data/suggestions.json"
