@@ -187,7 +187,7 @@ d3.json(apiurl, function(data) {
 	 polhtml = polhtml + "</ul>";
     };
   $("#policies").empty();
-  $("#policies").html("<h4><b>Policies that match your selection</b></h4><div><a class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#myModal\">Suggest policy</a></div>");
+  $("#policies").html("<h4><b>Policies that match your selection</b></h4><div><a class=\"btn btn-primary pull-right\" data-toggle=\"modal\" data-target=\"#myModal\">Suggest new policy</a></div>");
   $(polhtml).appendTo('#policies');
 })
 .header("Content-Type","application/json")
