@@ -156,6 +156,7 @@ def getprinciples(tabname):
     data = {}
     data['principles'] = principles
     cdata = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
+#    return(str(cdata))
     return Response(cdata,  mimetype='application/json')
 
 def getbestpractice(thistabname):
@@ -331,7 +332,7 @@ def bestpractice():
             discipline = name
     return getbestpractice(discipline)
 
-@app.route("/principles")
+@app.route("/principles", methods=['GET', 'POST'])
 def principles():
     return getprinciples("PARTHENOS guidelines")
 
