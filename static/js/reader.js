@@ -47,7 +47,7 @@ for (name in cdata) {
 	postdata[cdata[name]] = 1;	
 };
 
-apiurl = "/webfilter";
+apiurl = "/pws/webfilter";
 var senddata = JSON.stringify(postdata);
 
 d3.json(bestpracticesurl, function(bdata) {
@@ -102,7 +102,7 @@ if (flag == 1) {
 d3.json(apiurl, function(data) {
     console.log(data);
   $("#policies").empty();
-  $("#policies").html("<img src='/static/loading.gif'>");
+  $("#policies").html("<img src='/pws/static/loading.gif'>");
   $(polhtml).appendTo('#policies');
     var polhtml = '';
     var firstvalue = '';
