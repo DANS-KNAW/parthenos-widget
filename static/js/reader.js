@@ -7,8 +7,8 @@ testdata[y] = 1;
 var senddata =  JSON.stringify(testdata);
 
 d3.json(topicsurl, function(cdata) {
-    var tophtml = '<br><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
-    topichtml = '<br><p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+    var tophtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+    topichtml = '<p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     var tabnum = 0;
     for (k in cdata['order']) {
 	tophtml + '<p><input type="checkbox" value="topic:' + k_data + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p>';
@@ -69,7 +69,7 @@ d3.json(bestpracticesurl, function(bdata) {
 flag = 1;
 if (flag == 1) {
 	d3.json(topicsurl, function(cdata) {
-    	var tophtml = '<br><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+    	var tophtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     	topichtml = '<br><p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     	var tabnum = 0;
 	var topics= {};
@@ -187,7 +187,7 @@ d3.json(apiurl, function(data) {
 	 polhtml = polhtml + "</ul>";
     };
   $("#policies").empty();
-  $("#policies").html("<h4><b>Policies that match your selection</b></h4><div><a class=\"btn btn-primary pull-right\" data-toggle=\"modal\" data-target=\"#myModal\">Suggest new policy</a></div>");
+  $("#policies").html("<h4><b>Policies that match your selection</b></h4><div><a class=\"btn btn-primary pull-left\" data-toggle=\"modal\" data-target=\"#myModal\">Suggest new policy</a></div><div class=\"tab-pane active\" style=\"float:right\"><a class=\"btn btn-primary btnNext\">Next</a></div>");
   $(polhtml).appendTo('#policies');
 })
 .header("Content-Type","application/json")
