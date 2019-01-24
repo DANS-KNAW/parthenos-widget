@@ -20,6 +20,7 @@ import pandas as pd
 import simplejson
 import json
 import codecs
+from config import sid
 app = Flask(__name__)
 
 basedir = "%s" % os.getenv("HOME")
@@ -45,7 +46,6 @@ def googlespreadsheet(fields, form):
     gc = gspread.authorize(creds)
     worksheetID = 0
 
-    sid = "1ZpUkHO6VA5LDJEpmzc0_sTR_WKK-HkmZsNoHTULCAj0"
     wks = gc.open_by_key(sid)
     worksheet = wks.sheet1
     users = worksheet.get_all_values()
@@ -144,6 +144,12 @@ def getprinciples(tabname):
     df = pd.read_excel(MATRIX, sheetname=tabname, header=0, skiprows=0)
     
     principles = []
+    hdata = []
+    for i in df:
+        item = "<b>%s</b>" % str(i)
+        hdata.append(item)
+    principles.append(hdata)
+
     for i in df.index:
         data = []
         for c in df.columns:
