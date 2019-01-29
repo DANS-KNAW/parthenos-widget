@@ -43,7 +43,7 @@ $('.btn').on('click', function() {
                         class="glyphicon glyphicon-home"></i> Community</a></li>
                 <li><a href="#topics" role="tab-kv" data-toggle="tab"><i class="glyphicon glyphicon-user"></i>
                     Topic</a></li>
-                <li><a href="#policies" role="tab-kv" data-toggle="tab"><i class="glyphicon glyphicon-user"></i>
+                <li><a href="#policies" id="policytab" role="tab-kv" data-toggle="tab"><i class="glyphicon glyphicon-user"></i>
                     Policies</a></li>
                 <li><a href="#principles" role="tab-kv" data-toggle="tab"><i class="glyphicon glyphicon-user"></i>
                     Guidelines</a></li>
@@ -53,8 +53,12 @@ $('.btn').on('click', function() {
 		<h4><b>Select your Community</b></h4>
 			&nbsp;
     			<div class="tab-pane active" id="godiscipline" style="float:right">
-        		<a class="btn btn-primary btnNext">Next</a>
 			</div>
+			<script>
+			alert('disables');
+			$('#policytab').attr('disabled', true);
+			</script>
+			<a class="btn btn-primary btnNext">Next</a>
 			<div id="communityload"><br /><br /><img src='/static/loading.gif'></div>
                 </div>
                 <div class="tab-pane fade" id="topics">
