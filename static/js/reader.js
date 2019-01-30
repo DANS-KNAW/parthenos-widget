@@ -225,6 +225,15 @@ d3.json(contentsurl, function(cdata) {
 });
 
 $(function() {
+$(document).on("click", '#communityload input:checkbox', function() {
+    var group = ":checkbox[name='disc']";
+    if($(this).is(':checked')){
+       $(group).not($(this)).attr("checked",false);
+    }
+});
+  });
+
+$(function() {
 $(document).on("click", '#community input:checkbox', function() {
     var group = ":checkbox[name='comm']";
     if($(this).is(':checked')){
