@@ -26,17 +26,17 @@ d3.json(topicsurl, function(cdata) {
 
 d3.json(principlesurl, function(pdata) {
     console.log(pdata['principles']);
-  var polhtml = "<table>";
+  var polhtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well"><table>';
   for (k in pdata['principles']) {
-	stringhtml = '<tr valign=top>';
+	stringhtml = '<tr valign=top style="border-bottom: 1px solid #000;padding-top: 5px;padding-bottom: 5px; ">';
 	for (item in pdata['principles'][k]) {
-	   stringhtml = stringhtml + '<td>' + pdata['principles'][k][item] + "</td><td width=5></td>\n"; 
+	   stringhtml = stringhtml + '<td>' + pdata['principles'][k][item] + "</td><td width='8'>&nbsp;</td>\n"; 
 	}
 	polhtml = polhtml + stringhtml + "</tr>\n";
   }
-  polhtml = polhtml + "</table>";
+  polhtml = polhtml + "</table></ul>";
   $("#principles").empty();
-  $("#principles").html("<h4><b>All PARTHENOS Guidelines</b></h4>");
+  $("#principles").html("<h4><b>PARTHENOS Guidelines</b></h4>");
   $(polhtml).appendTo('#principles');
 })
 
