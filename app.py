@@ -11,11 +11,16 @@ from flask import Flask, redirect, make_response, Response, render_template, req
 #from tests.config import MATRIX
 #from parthenos.core.datatojson import *
 import uuid
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 import httpretty
 import requests
+import os.path
 import pandas as pd
 import simplejson
 import json
+import codecs
+from config import sid
 app = Flask(__name__)
 
 basedir = "%s" % os.getenv("HOME")
@@ -31,6 +36,38 @@ try:
     os.stat(cachedir)
 except:
     os.mkdir(cachedir)
+
+def googlespreadsheet(fields, form):
+    apikey = "apikey.json"
+    if not os.path.isfile(apikey):
+        return False
+    scope = ['https://spreadsheets.google.com/feeds']
+    creds = ServiceAccountCredentials.from_json_keyfile_name(apikey, scope)
+    gc = gspread.authorize(creds)
+    worksheetID = 0
+
+    wks = gc.open_by_key(sid)
+    worksheet = wks.sheet1
+    users = worksheet.get_all_values()
+    worksheet = wks.get_worksheet(worksheetID)
+    queries = worksheet.get_all_values()
+    if not queries:
+        k = 1 
+        for item in fields:
+            worksheet.update_cell(1, k, item)
+            k = k + 1
+        queries = worksheet.get_all_values()
+    newID = len(queries) + 1
+    aform = [""]
+    for item in fields:
+        if item in form:
+            aform.append(form[item])
+        else:
+            aform.append(None)
+
+    for k in range(1, len(aform)):
+        worksheet.update_cell(newID, k, aform[k])
+    return True
 
 def frametoxml(df):
     allvalues = {}
@@ -76,7 +113,7 @@ def matrix2xml():
     sheetid = 0
     xmlcontent = "<?xml version=\"1.0\"?>"
     xmlcontent = xmlcontent + "\n<Disciplines>"
-    data = read_contents("CONTENTS")
+    data = read_contents("contents")
     content = {}
     for index in data.index:
         row = data.ix[index]
@@ -107,6 +144,12 @@ def getprinciples(tabname):
     df = pd.read_excel(MATRIX, sheetname=tabname, header=0, skiprows=0)
     
     principles = []
+    hdata = []
+    for i in df:
+        item = "<b>%s</b>" % str(i)
+        hdata.append(item)
+    principles.append(hdata)
+
     for i in df.index:
         data = []
         for c in df.columns:
@@ -119,18 +162,19 @@ def getprinciples(tabname):
     data = {}
     data['principles'] = principles
     cdata = json.dumps(data, ensure_ascii=False, sort_keys=True, indent=4)
+#    return(str(cdata))
     return Response(cdata,  mimetype='application/json')
 
 def getbestpractice(thistabname):
     xl = pd.ExcelFile(MATRIX)
     df = ''
     for tabname in xl.sheet_names:
-        #if tabname != 'CONTENTS':
+        #if tabname != 'contents':
         if tabname == thistabname:
             df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
 
     bestpr = []
-    fields = ['BEST PRACTICE']
+    fields = ['best practice']
     for x in df[fields].index:
         thisvalue = str(df[fields].ix[x][0])
         if thisvalue != 'nan':
@@ -141,7 +185,7 @@ def getbestpractice(thistabname):
     return Response(cdata,  mimetype='application/json')
 
 def contents(tabname):
-    data = read_contents("CONTENTS")
+    data = read_contents("contents")
     content = {}
     for index in data.index:
         row = data.ix[index]
@@ -155,7 +199,7 @@ def contents(tabname):
     return Response(cdata,  mimetype='application/json')
 
 def list():
-    data = read_contents("CONTENTS")
+    data = read_contents("contents")
     tablist = {}
     tabs = []
     for name in data['name']:
@@ -185,7 +229,7 @@ def subtopics(thistabname):
     xl = pd.ExcelFile(MATRIX)
     df = ''
     for tabname in xl.sheet_names:
-        #if tabname != 'CONTENTS':
+        #if tabname != 'contents':
         if tabname == thistabname:
             df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
 
@@ -209,7 +253,7 @@ def subtopics(thistabname):
 def datacache(cachedir):
     xl = pd.ExcelFile(MATRIX)
     for tabname in xl.sheet_names:
-        if tabname == 'CONTENTS':
+        if tabname == 'contents':
             df = pd.read_excel(MATRIX, sheetname=tabname, header=None, skiprows=0)
         else:
             df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
@@ -226,7 +270,54 @@ def read_contents(tabname):
 
 @app.route("/")
 def main():
-    return render_template('widget.html')
+    return render_template('widget_suggest.html')
+
+@app.route("/suggest", methods = ['POST'])
+def suggest():
+    form = request.form
+    fields = ["author", "email", "link", "remarks", "title", "Community: Research community", "Community: Cultural Heritage Institute", "Community: Digital repository", "Community: Research infrastructure", "Findable", "Interoperable", "Accessable", "Reusable"]
+    googlespreadsheet(fields, form)
+    # Save in text file
+    textfile = "./data/suggestions.txt"
+    jsonfile = "./data/suggestions.json"
+    f = open(textfile,'a')
+    for item in form:
+        f.write("%s=%s\n" % (item, form[item]))
+    f.write("\n")
+    f.close()
+
+    # Save in json
+    if os.path.isfile(jsonfile):
+        f = codecs.open(jsonfile, "r", "utf-8")
+        data = json.loads(f.read())
+        f.close()
+        items = data['data']
+        items.append(form)
+        data['data'] = items
+        f = codecs.open(jsonfile, "w", "utf-8")
+        f.write(json.dumps(data).encode('utf-8'))
+        f.close()
+    else:
+        f = codecs.open(jsonfile, "w", "utf-8")
+        data = {}
+        items = []
+        items.append(form)
+        data['data'] = items
+        f.write(json.dumps(data).encode('utf-8'))
+        f.close()
+       
+    return "Thank you very much for your submission, policy \"%s\" was suggested." % form['title']
+
+@app.route("/suggested")
+def suggested():
+    jsonfile = "./data/suggestions.json"
+    if os.path.isfile(jsonfile):
+        f = codecs.open(jsonfile, "r", "utf-8")
+        data = json.loads(f.read())
+        return Response(json.dumps(data), mimetype='application/json; charset=utf-8')
+    else:
+        return "Suggested policies not found..."
+    
 
 @app.route("/bestpractice", methods=['GET', 'POST'])
 def bestpractice():
@@ -247,9 +338,9 @@ def bestpractice():
             discipline = name
     return getbestpractice(discipline)
 
-@app.route("/principles")
+@app.route("/principles", methods=['GET', 'POST'])
 def principles():
-    return getprinciples("HIGH-LEVEL PRINCIPLES")
+    return getprinciples("PARTHENOS guidelines")
 
 @app.route("/xmlmatrix")
 def export2xml():
@@ -257,7 +348,7 @@ def export2xml():
 
 @app.route("/verification")
 def verify():
-    c = read_contents("CONTENTS")
+    c = read_contents("contents")
     topics = []
     columns = {}
     for name in c['name']:
@@ -288,7 +379,6 @@ def webfilter():
 	return 'no topic'
 
     cache = {}
-    #newfilterparams = ["community:RESEARCH COMMUNITY","discipline:SOCIAL SCIENCE","topic:CITATION GUIDELINES", "topic:PRIVACY AND SENSITIVE DATA"]
     params = filtertodict(newfilterparams)
     discipline = ''
     searchfilter = {}
@@ -338,18 +428,20 @@ def webfilter():
 	if not topic in found:
 	    result[topic] = { 'result': noresult, 'status': 'not found', 'topic': fair[topic] } 
 	    datatopics[topic] = fair[topic]
-	    c = read_contents("CONTENTS")
+	    c = read_contents("contents")
 	    disc = {}
 	    common = collections.OrderedDict()
+	    dmatrix = {}
 	    for name in c['name']:
 	        if name != discipline:
 		    if name not in cache:
 		        cache[name] = dataloader(name)
 		    try:
 		        (outmatrix, fair) = mainfilter(cache[name], thisfilter)
-			dmatrix = {}
-			dmatrix[name] = outmatrix[topic]
-		        common[topic] = dmatrix
+			# DANS
+			if outmatrix[topic]:
+			    dmatrix[name] = outmatrix[topic]
+		            common[topic] = dmatrix
 		    except:
 		        skip = 1
 		
@@ -374,14 +466,14 @@ def webfilter():
 
 @app.route("/contents", methods=['GET', 'POST'])
 def webcontents():
-    return contents('CONTENTS')
+    return contents('contents')
     if request.data:
         qinput = json.loads( request.data )
         if 'selected' in qinput:
 	    return 'All disciplines'
 	return 'All disciplines selected'
     else:
-        return contents('CONTENTS')
+        return contents('contents')
 
 @app.route("/list")
 def showlist():
@@ -407,4 +499,5 @@ def webtopics():
 
 if __name__ == '__main__':
     s = datacache(cachedir)
-    app.run(host='0.0.0.0', port=8081)
+    #app.run(host='0.0.0.0', port=8081)
+    app.run(host='0.0.0.0', port=8082)

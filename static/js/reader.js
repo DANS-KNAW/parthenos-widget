@@ -7,8 +7,8 @@ testdata[y] = 1;
 var senddata =  JSON.stringify(testdata);
 
 d3.json(topicsurl, function(cdata) {
-    var tophtml = '<br><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
-    topichtml = '<br><p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+    var tophtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+    topichtml = '<p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     var tabnum = 0;
     for (k in cdata['order']) {
 	tophtml + '<p><input type="checkbox" value="topic:' + k_data + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p>';
@@ -36,7 +36,7 @@ d3.json(principlesurl, function(pdata) {
   }
   polhtml = polhtml + "</table>";
   $("#principles").empty();
-  $("#principles").html("<h4><b>All Parthenos High-Level Principles</b></h4>");
+  $("#principles").html("<h4><b>All PARTHENOS Guidelines</b></h4>");
   $(polhtml).appendTo('#principles');
 })
 
@@ -62,14 +62,14 @@ d3.json(bestpracticesurl, function(bdata) {
   console.log(polhtml);
   $("#bestpractice").empty();
   $("#bestpractice").html("<h4><b>Best Practices</b></h4>");
-  $(polhtml).appendTo('#bestpractice');
 })
 .header("Content-Type","application/json")
 .send("POST",senddata);
 
+flag = 1;
 if (flag == 1) {
 	d3.json(topicsurl, function(cdata) {
-    	var tophtml = '<br><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+    	var tophtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     	topichtml = '<br><p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     	var tabnum = 0;
 	var topics= {};
@@ -137,16 +137,16 @@ d3.json(apiurl, function(data) {
                             value = '';
                 	}
 			polurl = "#";
-			if (k_data['POLICY LINK'])
+			if (k_data['policy link'])
 			{
-		   	    polurl = k_data['POLICY LINK'];
+		   	    polurl = k_data['policy link'];
 			    found = 1;
 			}
 
-			if (k_data['POLICY'])
+			if (k_data['policy'])
 			{
-                    	    name = "<a href='" + polurl + "' target=_blank>" + k_data['POLICY']  + "</a>";
-                    	    polhtml = polhtml + '<li>' + k_data['ORGANISATION'] + ' ' + name + '</li>';
+                    	    name = "<a href='" + polurl + "' target=_blank>" + k_data['policy']  + "</a>";
+                    	    polhtml = polhtml + '<li>' + k_data['organisation'] + ' ' + name + '</li>';
 			}
         	};
 	     }
@@ -160,23 +160,25 @@ d3.json(apiurl, function(data) {
 		    if (data['other'])
 	    	    {
 	        	polhtml = polhtml + "No results for this topic.";
+			polhtml = polhtml + " Here you can find some suggestions from other disciplines:";
 	        	for (thisdisc in data['other'][keytopic]) 
 			{
-			    polhtml = polhtml + " Here you can find some suggestions from other disciplines:";
 		    	    polhtml = polhtml + "<h5>" + thisdisc + "</h5>";
 	 	    	    var polvalue = data['other'][keytopic][thisdisc];
 	             	    for (d in polvalue)
 		    	    {
 				k_data = polvalue[d];
                 		polurl = "#";
-                		if (k_data['POLICY LINK'])
+                		if (k_data['policy link'])
                 		{  
-                   	    	    polurl = k_data['POLICY LINK'];
+                   	    	    polurl = k_data['policy link'];
                 		}
-	        		name = "<a href='" + polurl + "' target=_blank>" + k_data['POLICY']  + "</a>";
-                		polhtml = polhtml + '<li> ' + k_data['ORGANISATION'] + ' ' + name + '</li>';
+	        		name = "<a href='" + polurl + "' target=_blank>" + k_data['policy']  + "</a>";
+				if (polurl.length > 3) {
+                		polhtml = polhtml + '<li> ' + k_data['organisation'] + ' ' + name + '</li>';
+				}
 	            	     }
-	        	};
+			};
 	    	    };
 
 		polhtml = polhtml + "</ul>";
@@ -185,7 +187,7 @@ d3.json(apiurl, function(data) {
 	 polhtml = polhtml + "</ul>";
     };
   $("#policies").empty();
-  $("#policies").html("<h4><b>Policies that match your selection</b></h4>");
+  $("#policies").html("<h4><b>Policies that match your selection</b></h4><div><a class=\"btn btn-primary pull-left\" data-toggle=\"modal\" data-target=\"#myModal\">Suggest new policy</a></div><div class=\"tab-pane active\" style=\"float:right\"><a class=\"btn btn-primary btnNext\">Next</a></div>");
   $(polhtml).appendTo('#policies');
 })
 .header("Content-Type","application/json")
@@ -194,7 +196,7 @@ d3.json(apiurl, function(data) {
 
 d3.json(contentsurl, function(cdata) {
     var conthtml = '<h4><b>Select your Community</b></h4><div class="tab-pane active" id="godiscipline" style="float:right"><a class="btn btn-primary btnNext">Next</a></div><br /><br />';
-    var conthtml = '<br><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+    var conthtml = '';
 
     topichtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     var tabnum = 0;
@@ -203,24 +205,23 @@ d3.json(contentsurl, function(cdata) {
         tabnum = tabnum + 1;
         var k_data = cdata['contents'][k];
         if (!k_data) {
-	    conthtml = conthtml + '<p><input name="comm" type="checkbox" value="community:' + k + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p>';
+	    conthtml = conthtml + '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well"><p><input name="disc" type="checkbox" value="discipline:' + k + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p></ul>';
         }
         else
         {
 	    var thisval = known[k_data];
 	    if (!thisval) {
-		conthtml = conthtml + '<p><input name="comm" type="checkbox" value="community:' + k_data + '" id="input-10a" data-toggle="checkbox-x"> ' + k_data + '</p>';
+		topichtml = topichtml + '<p>&nbsp;&nbsp;<b>' + k_data + '</b></p>';
 	    };
             topichtml = topichtml + '<p><input name="disc" type="checkbox" value="discipline:' + k + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p>';
 	    known[k_data] = k;
         }
     }
-    conthtml = conthtml + "</ul>";
     topichtml = topichtml + '</ul>';
+    conthtml = topichtml + conthtml;
     $("#communityload").empty();
     $('#communityload').html(conthtml);
 
-    $(topichtml).appendTo('#discipline');
 });
 
 $(function() {
