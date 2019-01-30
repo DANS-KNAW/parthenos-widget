@@ -102,7 +102,7 @@ if (flag == 1) {
 d3.json(apiurl, function(data) {
     console.log(data);
   $("#policies").empty();
-  $("#policies").html("<img src='/static/loading.gif'>");
+  $("#policies").html("<img src='/parthenos-wizard/static/loading.gif'>");
   $(polhtml).appendTo('#policies');
     var polhtml = '';
     var firstvalue = '';
