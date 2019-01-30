@@ -5,7 +5,7 @@ xlrd
 simplejson
 requests
 httpretty
-numpy
+numpy==1.15
 pillow
-pandas
+pandas==0.22
 tables
