@@ -15,7 +15,7 @@ pip install -r requirements.txt
 # Build Docker image
 docker build -t parthenos:latest .
 # Run Docker container
-docker run -p 8082:8082 parthenos
+docker run -p 8082:8081 parthenos
 # Run curl to get contents
 curl http://localhost:8081/contents
 # Run curl to get topics list
