@@ -232,9 +232,9 @@ def subtopics(thistabname):
         #if tabname != 'contents':
         if tabname == thistabname:
             df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
-    if not df:
-        alltopics['topics'] = 'Please select topic'
-        return json.dumps(alltopics, ensure_ascii=False, sort_keys=True, indent=4)
+    #if not df:
+    #    alltopics['topics'] = 'Please select topic'
+    #    return json.dumps(alltopics, ensure_ascii=False, sort_keys=True, indent=4)
 
     # Make order FAIR
     fields = ['Findable', 'Accessible', 'Interoperable', 'Reusable']
