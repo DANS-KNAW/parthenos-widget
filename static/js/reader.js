@@ -47,7 +47,7 @@ for (name in cdata) {
 	postdata[cdata[name]] = 1;	
 };
 
-apiurl = "/webfilter";
+apiurl = "/parthenos-wizard/webfilter";
 var senddata = JSON.stringify(postdata);
 
 d3.json(bestpracticesurl, function(bdata) {
