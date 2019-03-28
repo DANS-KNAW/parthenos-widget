@@ -38,7 +38,79 @@ d3.json(principlesurl, function(pdata) {
   $("#principles").empty();
   $("#principles").html("<h4><b>PARTHENOS Guidelines</b></h4>");
   $(polhtml).appendTo('#principles');
-})
+});
+
+function cleanup () {
+    var topicdefault = '';
+
+    d3.json(contentsurl, function(cdata) {
+    var showcommunity = '<h4><b>Select your Community</b></h4><div class="tab-pane active" id="godiscipline" style="float:right"><a class="btn btn-primary btnNext">Next</a></div><br /><br />';
+    var showcommunity = '';
+
+    disciplinehtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+    var tabnum = 0;
+    var known = new Object();
+    for (k in cdata['contents']) {
+        tabnum = tabnum + 1;
+        var k_data = cdata['contents'][k];
+        if (!k_data) {
+            conthtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well"><p><input name="disc" type="checkbox" value="discipline:' + k + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p></ul>';
+	    showcommunity = showcommunity + conthtml;
+        }
+        else
+        {
+            var thisval = known[k_data];
+            if (!thisval) {
+                disciplinehtml = disciplinehtml + '<p>&nbsp;&nbsp;<b>' + k_data + '</b></p>';
+            };
+            disciplinehtml = disciplinehtml + '<p><input name="disc" type="checkbox" value="discipline:' + k + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p>';
+            known[k_data] = k;
+        }
+    }
+
+    disciplinehtml = disciplinehtml + '</ul>';
+    showcommunity = disciplinehtml + showcommunity;
+
+    $("#communityload").empty();
+    $("#topicdata").empty();
+    $("#policies").empty();
+    $('#communityload').html(showcommunity);
+    topichtml = topicdefault; 
+    $("#topicdata").html(topichtml);
+    });
+}
+
+function makeempty () {
+   $("#topics").empty();
+   d3.json(topicsurl, function(cdata) {
+        var tophtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+        topichtml = '<br><p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+        var tabnum = 0;
+        var topics= {};
+        var topicid = 0;
+        for (showtopic in cdata['topics'])
+        {
+           topics[showtopic] = topicid;
+           topicid = topicid + 1;
+        }
+        for (k in cdata['order']) {
+                showtopic = cdata['order'][k];
+                tophtml = tophtml + '<p><b><font color=#3077e8>' + showtopic + '</font></b></p>';
+                topicid = topics[showtopic];
+                for (x in cdata['topics'][showtopic])
+                {
+                tabnum = tabnum + 1;
+                var k_data = cdata['topics'][showtopic][x];
+                tophtml = tophtml + '<p><input type="checkbox" value="topic:' + k_data + '" id="input-10a" data-toggle="checkbox-x"> ' + k_data + '</p>';
+                }
+        }
+
+        tophtml = tophtml + '</ul>';
+   })
+   .header("Content-Type","application/json")
+   .send("POST",senddata);
+   $("#policies").empty();
+}
 
 function result (cdata, flag) {
 var postdata = {};
@@ -48,23 +120,8 @@ for (name in cdata) {
 };
 
 apiurl = "/parthenos-wizard/webfilter";
+apiurl = "/webfilter";
 var senddata = JSON.stringify(postdata);
-
-d3.json(bestpracticesurl, function(bdata) {
-    console.log(bdata['bestpractice']);
-  var polhtml = "<table>";
-  for (k in bdata['bestpractice']) {
-        stringhtml = '<tr valign=top><td width=10></td>';
-        stringhtml = stringhtml + '<td><li>' + bdata['bestpractice'][k] + "</td><td width=5></td>\n";
-        polhtml = polhtml + stringhtml + "</tr>\n";
-  }
-  polhtml = polhtml + "</table>";
-  console.log(polhtml);
-  $("#bestpractice").empty();
-  $("#bestpractice").html("<h4><b>Best Practices</b></h4>");
-})
-.header("Content-Type","application/json")
-.send("POST",senddata);
 
 flag = 1;
 if (flag == 1) {
@@ -93,7 +150,7 @@ if (flag == 1) {
 
     	tophtml = tophtml + '</ul>';
     	$('#topicsdata').empty();
-    	$(tophtml).appendTo('#topics');
+    	$(tophtml).appendTo('#topicsdata');
 	})
 	.header("Content-Type","application/json")
 	.send("POST",senddata);
