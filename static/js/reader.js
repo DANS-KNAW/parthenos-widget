@@ -120,7 +120,7 @@ for (name in cdata) {
 };
 
 apiurl = "/parthenos-wizard/webfilter";
-apiurl = "/webfilter";
+#apiurl = "/webfilter";
 var senddata = JSON.stringify(postdata);
 
 flag = 1;
