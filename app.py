@@ -22,6 +22,7 @@ import json
 import codecs
 from config import sid
 app = Flask(__name__)
+#app = Flask(__name__, static_folder ='parthenos-wizard')
 
 basedir = "%s" % os.getenv("HOME")
 datadir = "%s/data" % basedir
@@ -372,6 +373,8 @@ def verify():
 @app.route("/webfilter", methods=['GET', 'POST'])
 def webfilter():
     newfilterparams = []
+    if not request.data:
+        return 'no topic'
     try:
          qinput = json.loads( request.data )
          for name in qinput.keys():
@@ -485,6 +488,8 @@ def showlist():
 @app.route("/topics", methods=['GET', 'POST'])
 def webtopics():
     maindiscipline = 'SOCIAL SCIENCE'
+    if not request.data:
+        return 'no topic'
     if request.data:
         qinput = json.loads( request.data )
         thistopic = ''
