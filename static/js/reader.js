@@ -2,6 +2,8 @@ var val = [];
 var postdata = {};
 var senddata = {};
 var testdata = {};
+apiurl = "/parthenos-wizard/webfilter";
+
 y= "discipline:SOCIAL SCIENCE";
 testdata[y] = 1;
 var senddata =  JSON.stringify(testdata);
@@ -10,7 +12,8 @@ d3.json(topicsurl, function(cdata) {
     var tophtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     topichtml = '<p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     var tabnum = 0;
-    for (k in cdata['order']) {
+    if (cdata) {
+        for (k in cdata['order']) {
 	tophtml + '<p><input type="checkbox" value="topic:' + k_data + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p>';
 	for (x in cdata['topics'][k]) {
             tabnum = tabnum + 1;
@@ -18,6 +21,7 @@ d3.json(topicsurl, function(cdata) {
             tophtml = tophtml + '<p><input type="checkbox" value="topic:' + k_data + '" id="input-10a" data-toggle="checkbox-x"> ' + k_data + '</p>';
         }
 	}
+    }
 
     tophtml = tophtml + '</ul>';
 })
@@ -119,8 +123,6 @@ for (name in cdata) {
 	postdata[cdata[name]] = 1;	
 };
 
-apiurl = "/parthenos-wizard/webfilter";
-#apiurl = "/webfilter";
 var senddata = JSON.stringify(postdata);
 
 flag = 1;
@@ -163,7 +165,8 @@ d3.json(apiurl, function(data) {
   $(polhtml).appendTo('#policies');
     var polhtml = '';
     var firstvalue = '';
-    for (thistopic in data['topics']) {
+    if (data) {
+        for (thistopic in data['topics']) {
 	var found = 0;
 	if (thistopic)
 	{
@@ -242,10 +245,11 @@ d3.json(apiurl, function(data) {
 	     };
 	 };
 	 polhtml = polhtml + "</ul>";
+       };
     };
-  $("#policies").empty();
-  $("#policies").html("<h4><b>Policies that match your selection</b></h4><div><a class=\"btn btn-primary pull-left\" data-toggle=\"modal\" data-target=\"#myModal\">Suggest new policy</a></div><div class=\"tab-pane active\" style=\"float:right\"><a class=\"btn btn-primary btnNext\">Next</a></div>");
-  $(polhtml).appendTo('#policies');
+    $("#policies").empty();
+    $("#policies").html("<h4><b>Policies that match your selection</b></h4><div><a class=\"btn btn-primary pull-left\" data-toggle=\"modal\" data-target=\"#myModal\">Suggest new policy</a></div><div class=\"tab-pane active\" style=\"float:right\"><a class=\"btn btn-primary btnNext\">Next</a></div>");
+    $(polhtml).appendTo('#policies');
 })
 .header("Content-Type","application/json")
 .send("POST",senddata);
