@@ -77,7 +77,7 @@ function cleanup () {
 
     $("#communityload").empty();
     $("#topicdata").empty();
-    $("#policies").empty();
+    $("#policydata").empty();
     $('#communityload').html(showcommunity);
     topichtml = topicdefault; 
     $("#topicdata").html(topichtml);
@@ -113,7 +113,7 @@ function makeempty () {
    })
    .header("Content-Type","application/json")
    .send("POST",senddata);
-   $("#policies").empty();
+   $("#policydata").empty();
 }
 
 function result (cdata, flag) {
@@ -160,13 +160,12 @@ if (flag == 1) {
 
 d3.json(apiurl, function(data) {
     console.log(data);
-  $("#policies").empty();
-  $("#policies").html("<img src='/parthenos-wizard/static/loading.gif'>");
-  $(polhtml).appendTo('#policies');
+  $("#policydata").empty();
+  $("#policydata").html("<img src='/parthenos-wizard/static/loading.gif'>");
+  $(polhtml).appendTo('#policydata');
     var polhtml = '';
     var firstvalue = '';
-    if (data) {
-        for (thistopic in data['topics']) {
+    for (thistopic in data['topics']) {
 	var found = 0;
 	if (thistopic)
 	{
@@ -245,11 +244,10 @@ d3.json(apiurl, function(data) {
 	     };
 	 };
 	 polhtml = polhtml + "</ul>";
-       };
     };
-    $("#policies").empty();
-    $("#policies").html("<h4><b>Policies that match your selection</b></h4><div><a class=\"btn btn-primary pull-left\" data-toggle=\"modal\" data-target=\"#myModal\">Suggest new policy</a></div><div class=\"tab-pane active\" style=\"float:right\"><a class=\"btn btn-primary btnNext\">Next</a></div>");
-    $(polhtml).appendTo('#policies');
+    $("#policydata").empty();
+    $("#policydata").html("<h4><b>Policies that match your selection</b></h4><div><a class=\"btn btn-primary pull-left\" data-toggle=\"modal\" data-target=\"#myModal\">Suggest new policy</a></div><div class=\"tab-pane active\" style=\"float:right\"><a class=\"btn btn-primary btnNext\">Next</a></div>");
+    $(polhtml).appendTo('#policydata');
 })
 .header("Content-Type","application/json")
 .send("POST",senddata);
