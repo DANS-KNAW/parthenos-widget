@@ -1,5 +1,43 @@
 <!DOCTYPE html>
-{% include "header_parthenos.html" %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Parthenos Widget</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+	table, th, td {
+  	border: 0px solid black;
+        padding-bottom: 5px;
+	}
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <link href="/parthenos-wizard/css/bootstrap-tabs-x.css" media="all" rel="stylesheet" type="text/css"/>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/parthenos-wizard/static/js/bootstrap-tabs-x.js" type="text/javascript"></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script>
+	weburl = "/parthenos-wizard";
+        polurl = weburl + "/?policy=";
+        contentsurl = weburl + '/contents';
+        topicsurl = weburl + '/topics';
+
+	apiurl = "/widget/policies";
+	principlesurl = weburl + '/principles';
+	bestpracticesurl = weburl + '/bestpractice';
+	apiurl_list = weburl + "/list";
+
+$('.btn').on('click', function() {
+    var $this = $(this);
+  $this.button('loading');
+    setTimeout(function() {
+       $this.button('reset');
+   }, 8000);
+});
+    </script>
+
+</head>
+<script src="https://twitter.github.com/bootstrap/assets/js/bootstrap.js"></script>
+<script src="/parthenos-wizard/static/js/reader.js" type="text/javascript"></script>
 <body>
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -81,8 +119,7 @@
     <div class="col-md-6">
         <div class="tabs-x tabs-above">
             <ul class="nav nav-tabs" role="tablist">
-                <li class="active"><a href="#community" role="tab" data-toggle="tab" onclick="cleanup();">
-                    <i class="glyphicon glyphicon-home"></i> Community</a></li>
+                <li class="active"><a href="#community" role="tab" data-toggle="tab" onclick="cleanup();"><i class="glyphicon glyphicon-home"></i> Community</a></li>
                 <li><a href="#topics" class="btn disabled" role="tab-kv" data-toggle="tab"><i class="glyphicon glyphicon-user"></i>
                     Topic</a></li>
                 <li><a href="#policies" class="btn disabled" id="policytab" role="tab-kv" data-toggle="tab"><i class="glyphicon glyphicon-user"></i>
@@ -115,7 +152,7 @@
                 Suggest policy
                 </a>
 
-		<div class="tab-pane active" style="float:right" id="gotopic">
+		<div class="tab-pane active" style="float:right" id="policydata">
                 <a class="btn btn-primary btnPrevious">Back</a>
 		<a class="btn btn-primary btnNext">Print</a>
                 </div>
