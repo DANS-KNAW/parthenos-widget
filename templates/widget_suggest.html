@@ -148,18 +148,12 @@ $('.btn').on('click', function() {
 
                 <div class="tab-pane fade" id="policies">
                 <h4><b>Policies that match your selection</b></h4>
-                <a class="btn btn-primary" data-toggle="modal" data-target="#myModal">
-                Suggest policy
-                </a>
+                        <div class="tab-pane active" style="float:right" id="policyline">
+                        <a class="btn btn-primary btnNext">Next</a>
+                        </div>
 
-		<div class="tab-pane active" style="float:right" id="policydata">
-                <a class="btn btn-primary btnPrevious">Back</a>
-		<a class="btn btn-primary btnNext">Print</a>
-                </div>
-                <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Suggest policy</button>
-		<a class="btn btn-primary btnNext">Next</a>
-                </div>
+                        <div class="tab-pane" style="float:center" id="policydata"><br /><br /><img src='/parthenos-wizard/static/loading.gif'></div>
+
                 </div>
 
                 <div class="tab-pane fade" id="principles">
