@@ -46,6 +46,8 @@ d3.json(principlesurl, function(pdata) {
 
 function cleanup () {
     var topicdefault = '';
+    var val = []
+    senddata = {};
 
     d3.json(contentsurl, function(cdata) {
     var showcommunity = '<h4><b>Select your Community</b></h4><div class="tab-pane active" id="godiscipline" style="float:right"><a class="btn btn-primary btnNext">Next</a></div><br /><br />';
@@ -118,6 +120,7 @@ function makeempty () {
 
 function result (cdata, flag) {
 var postdata = {};
+var polhtml = '';
 var xcdata = ["community:RESEARCH COMMUNITY", "discipline:SOCIAL SCIENCE", "topic:LEGAL FRAMEWORK", "topic:PRIVACY AND SENSITIVE DATA"];
 for (name in cdata) {
 	postdata[cdata[name]] = 1;	
@@ -160,9 +163,8 @@ if (flag == 1) {
 
 d3.json(apiurl, function(data) {
     console.log(data);
-  $("#policydata").empty();
-  $("#policydata").html("<img src='/parthenos-wizard/static/loading.gif'>");
-  $(polhtml).appendTo('#policydata');
+    $("#policydata").empty();
+    $(polhtml).appendTo('#policydata');
     var polhtml = '';
     var firstvalue = '';
     for (thistopic in data['topics']) {
@@ -245,8 +247,6 @@ d3.json(apiurl, function(data) {
 	 };
 	 polhtml = polhtml + "</ul>";
     };
-    $("#policydata").empty();
-    $("#policydata").html("<h4><b>Policies that match your selection</b></h4><div><a class=\"btn btn-primary pull-left\" data-toggle=\"modal\" data-target=\"#myModal\">Suggest new policy</a></div><div class=\"tab-pane active\" style=\"float:right\"><a class=\"btn btn-primary btnNext\">Next</a></div>");
     $(polhtml).appendTo('#policydata');
 })
 .header("Content-Type","application/json")
