@@ -31,6 +31,7 @@ d3.json(topicsurl, function(cdata) {
 d3.json(principlesurl, function(pdata) {
     console.log(pdata['principles']);
   var polhtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well"><table>';
+  var xpolhtml = polhtml;
   for (k in pdata['principles']) {
 	stringhtml = '<tr valign=top style="border-bottom: 1px solid #000;padding-top: 5px;padding-bottom: 5px; ">';
 	for (item in pdata['principles'][k]) {
@@ -41,6 +42,9 @@ d3.json(principlesurl, function(pdata) {
   polhtml = polhtml + "</table></ul>";
   $("#principles").empty();
   $("#principles").html("<h4><b>PARTHENOS Guidelines</b></h4>");
+  $(polhtml).appendTo('#1principles');
+  addpol = "<iframe src = '/parthenos-wizard/static/web/ViewerJS/index.html#/parthenos-wizard/static/web/ViewerJS/wizard.pdf' width='500' height='600' allowfullscreen webkitallowfullscreen></iframe>";
+  polhtml = xpolhtml + addpol;
   $(polhtml).appendTo('#principles');
 });
 
