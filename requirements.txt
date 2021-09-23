@@ -8,5 +8,5 @@ httpretty
 numpy==1.15
 pillow
 pandas==0.22
-rsa==4.0
+rsa==4.7
 tables==3.4.2
