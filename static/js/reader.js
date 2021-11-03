@@ -2,6 +2,8 @@ var val = [];
 var postdata = {};
 var senddata = {};
 var testdata = {};
+apiurl = "/parthenos-wizard/webfilter";
+
 y= "discipline:SOCIAL SCIENCE";
 testdata[y] = 1;
 var senddata =  JSON.stringify(testdata);
@@ -10,7 +12,8 @@ d3.json(topicsurl, function(cdata) {
     var tophtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     topichtml = '<p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
     var tabnum = 0;
-    for (k in cdata['order']) {
+    if (cdata) {
+        for (k in cdata['order']) {
 	tophtml + '<p><input type="checkbox" value="topic:' + k_data + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p>';
 	for (x in cdata['topics'][k]) {
             tabnum = tabnum + 1;
@@ -18,6 +21,7 @@ d3.json(topicsurl, function(cdata) {
             tophtml = tophtml + '<p><input type="checkbox" value="topic:' + k_data + '" id="input-10a" data-toggle="checkbox-x"> ' + k_data + '</p>';
         }
 	}
+    }
 
     tophtml = tophtml + '</ul>';
 })
@@ -26,45 +30,107 @@ d3.json(topicsurl, function(cdata) {
 
 d3.json(principlesurl, function(pdata) {
     console.log(pdata['principles']);
-  var polhtml = "<table>";
+  var polhtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well"><table>';
+  var xpolhtml = polhtml;
   for (k in pdata['principles']) {
-	stringhtml = '<tr valign=top>';
+	stringhtml = '<tr valign=top style="border-bottom: 1px solid #000;padding-top: 5px;padding-bottom: 5px; ">';
 	for (item in pdata['principles'][k]) {
-	   stringhtml = stringhtml + '<td>' + pdata['principles'][k][item] + "</td><td width=5></td>\n"; 
+	   stringhtml = stringhtml + '<td>' + pdata['principles'][k][item] + "</td><td width='8'>&nbsp;</td>\n"; 
 	}
 	polhtml = polhtml + stringhtml + "</tr>\n";
   }
-  polhtml = polhtml + "</table>";
+  polhtml = polhtml + "</table></ul>";
   $("#principles").empty();
-  $("#principles").html("<h4><b>All PARTHENOS Guidelines</b></h4>");
+  $("#principles").html("<h4><b>PARTHENOS Guidelines</b></h4>");
+  $(polhtml).appendTo('#1principles');
+  addpol = "<iframe src = '/parthenos-wizard/static/web/ViewerJS/index.html#/parthenos-wizard/static/web/ViewerJS/wizard.pdf' width='500' height='600' allowfullscreen webkitallowfullscreen></iframe>";
+  polhtml = xpolhtml + addpol;
   $(polhtml).appendTo('#principles');
-})
+});
+
+function cleanup () {
+    var topicdefault = '';
+    var val = []
+    senddata = {};
+
+    d3.json(contentsurl, function(cdata) {
+    var showcommunity = '<h4><b>Select your Community</b></h4><div class="tab-pane active" id="godiscipline" style="float:right"><a class="btn btn-primary btnNext">Next</a></div><br /><br />';
+    var showcommunity = '';
+
+    disciplinehtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+    var tabnum = 0;
+    var known = new Object();
+    for (k in cdata['contents']) {
+        tabnum = tabnum + 1;
+        var k_data = cdata['contents'][k];
+        if (!k_data) {
+            conthtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well"><p><input name="disc" type="checkbox" value="discipline:' + k + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p></ul>';
+	    showcommunity = showcommunity + conthtml;
+        }
+        else
+        {
+            var thisval = known[k_data];
+            if (!thisval) {
+                disciplinehtml = disciplinehtml + '<p>&nbsp;&nbsp;<b>' + k_data + '</b></p>';
+            };
+            disciplinehtml = disciplinehtml + '<p><input name="disc" type="checkbox" value="discipline:' + k + '" id="input-10a" data-toggle="checkbox-x"> ' + k + '</p>';
+            known[k_data] = k;
+        }
+    }
+
+    disciplinehtml = disciplinehtml + '</ul>';
+    showcommunity = disciplinehtml + showcommunity;
+
+    $("#communityload").empty();
+    $("#topicdata").empty();
+    $("#policydata").empty();
+    $('#communityload').html(showcommunity);
+    topichtml = topicdefault; 
+    $("#topicdata").html(topichtml);
+    });
+}
+
+function makeempty () {
+   $("#topics").empty();
+   d3.json(topicsurl, function(cdata) {
+        var tophtml = '<ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+        topichtml = '<br><p>Discipline</p><ul id="nav-tabs-wrapper" class="nav nav-tabs nav-pills nav-stacked well">';
+        var tabnum = 0;
+        var topics= {};
+        var topicid = 0;
+        for (showtopic in cdata['topics'])
+        {
+           topics[showtopic] = topicid;
+           topicid = topicid + 1;
+        }
+        for (k in cdata['order']) {
+                showtopic = cdata['order'][k];
+                tophtml = tophtml + '<p><b><font color=#3077e8>' + showtopic + '</font></b></p>';
+                topicid = topics[showtopic];
+                for (x in cdata['topics'][showtopic])
+                {
+                tabnum = tabnum + 1;
+                var k_data = cdata['topics'][showtopic][x];
+                tophtml = tophtml + '<p><input type="checkbox" value="topic:' + k_data + '" id="input-10a" data-toggle="checkbox-x"> ' + k_data + '</p>';
+                }
+        }
+
+        tophtml = tophtml + '</ul>';
+   })
+   .header("Content-Type","application/json")
+   .send("POST",senddata);
+   $("#policydata").empty();
+}
 
 function result (cdata, flag) {
 var postdata = {};
+var polhtml = '';
 var xcdata = ["community:RESEARCH COMMUNITY", "discipline:SOCIAL SCIENCE", "topic:LEGAL FRAMEWORK", "topic:PRIVACY AND SENSITIVE DATA"];
 for (name in cdata) {
 	postdata[cdata[name]] = 1;	
 };
 
-apiurl = "/webfilter";
 var senddata = JSON.stringify(postdata);
-
-d3.json(bestpracticesurl, function(bdata) {
-    console.log(bdata['bestpractice']);
-  var polhtml = "<table>";
-  for (k in bdata['bestpractice']) {
-        stringhtml = '<tr valign=top><td width=10></td>';
-        stringhtml = stringhtml + '<td><li>' + bdata['bestpractice'][k] + "</td><td width=5></td>\n";
-        polhtml = polhtml + stringhtml + "</tr>\n";
-  }
-  polhtml = polhtml + "</table>";
-  console.log(polhtml);
-  $("#bestpractice").empty();
-  $("#bestpractice").html("<h4><b>Best Practices</b></h4>");
-})
-.header("Content-Type","application/json")
-.send("POST",senddata);
 
 flag = 1;
 if (flag == 1) {
@@ -93,7 +159,7 @@ if (flag == 1) {
 
     	tophtml = tophtml + '</ul>';
     	$('#topicsdata').empty();
-    	$(tophtml).appendTo('#topics');
+    	$(tophtml).appendTo('#topicsdata');
 	})
 	.header("Content-Type","application/json")
 	.send("POST",senddata);
@@ -101,9 +167,8 @@ if (flag == 1) {
 
 d3.json(apiurl, function(data) {
     console.log(data);
-  $("#policies").empty();
-  $("#policies").html("<img src='/static/loading.gif'>");
-  $(polhtml).appendTo('#policies');
+    $("#policydata").empty();
+    $(polhtml).appendTo('#policydata');
     var polhtml = '';
     var firstvalue = '';
     for (thistopic in data['topics']) {
@@ -186,9 +251,7 @@ d3.json(apiurl, function(data) {
 	 };
 	 polhtml = polhtml + "</ul>";
     };
-  $("#policies").empty();
-  $("#policies").html("<h4><b>Policies that match your selection</b></h4><div><a class=\"btn btn-primary pull-left\" data-toggle=\"modal\" data-target=\"#myModal\">Suggest new policy</a></div><div class=\"tab-pane active\" style=\"float:right\"><a class=\"btn btn-primary btnNext\">Next</a></div>");
-  $(polhtml).appendTo('#policies');
+    $(polhtml).appendTo('#policydata');
 })
 .header("Content-Type","application/json")
 .send("POST",senddata);
@@ -223,6 +286,15 @@ d3.json(contentsurl, function(cdata) {
     $('#communityload').html(conthtml);
 
 });
+
+$(function() {
+$(document).on("click", '#communityload input:checkbox', function() {
+    var group = ":checkbox[name='disc']";
+    if($(this).is(':checked')){
+       $(group).not($(this)).attr("checked",false);
+    }
+});
+  });
 
 $(function() {
 $(document).on("click", '#community input:checkbox', function() {

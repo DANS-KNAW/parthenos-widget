@@ -22,6 +22,7 @@ import json
 import codecs
 from config import sid
 app = Flask(__name__)
+#app = Flask(__name__, static_folder ='parthenos-wizard')
 
 basedir = "%s" % os.getenv("HOME")
 datadir = "%s/data" % basedir
@@ -232,6 +233,9 @@ def subtopics(thistabname):
         #if tabname != 'contents':
         if tabname == thistabname:
             df = pd.read_excel(MATRIX, sheetname=tabname, header=1, skiprows=0)
+    #if not df:
+    #    alltopics['topics'] = 'Please select topic'
+    #    return json.dumps(alltopics, ensure_ascii=False, sort_keys=True, indent=4)
 
     # Make order FAIR
     fields = ['Findable', 'Accessible', 'Interoperable', 'Reusable']
@@ -369,6 +373,8 @@ def verify():
 @app.route("/webfilter", methods=['GET', 'POST'])
 def webfilter():
     newfilterparams = []
+    if not request.data:
+        return 'no topic'
     try:
          qinput = json.loads( request.data )
          for name in qinput.keys():
@@ -482,6 +488,8 @@ def showlist():
 @app.route("/topics", methods=['GET', 'POST'])
 def webtopics():
     maindiscipline = 'SOCIAL SCIENCE'
+    if not request.data:
+        return 'no topic'
     if request.data:
         qinput = json.loads( request.data )
         thistopic = ''
@@ -499,5 +507,4 @@ def webtopics():
 
 if __name__ == '__main__':
     s = datacache(cachedir)
-    #app.run(host='0.0.0.0', port=8081)
-    app.run(host='0.0.0.0', port=8082)
+    app.run(host='0.0.0.0', port=8081)

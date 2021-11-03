@@ -1,11 +1,12 @@
 flask
-gspread
+gspread==2.0.0
 oauth2client
-xlrd
+xlrd==1.1.0
 simplejson
 requests
 httpretty
-numpy
+numpy==1.15
 pillow
-pandas
-tables
+pandas==0.22
+rsa==4.0
+tables==3.4.2
