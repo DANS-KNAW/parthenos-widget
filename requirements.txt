@@ -5,7 +5,7 @@ xlrd==1.1.0
 simplejson
 requests
 httpretty
-numpy==1.15
+numpy==1.22.0
 pillow
 pandas==0.22
 rsa==4.7
